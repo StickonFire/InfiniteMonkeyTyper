@@ -2,47 +2,69 @@
 #include "MonkeyTyper.hpp"
 #include <gtest/gtest.h>
 
-TEST(MonkeyTyperTest,SingleCharIncorrect) {
+
+struct testInput{
+  string query;
+  vector<char> rngDraws;
+  vector<Status> results;
+  vector<int> drawSize;
+};
+
+void testValues(testInput &input){
+  MockLetterSelector test_rng(input.rngDraws);
+  MonkeyTyper test_typer(0,test_rng,input.query);
+  Status result;
+  for(int i = 0; i < input.drawSize.size(); i++){
+      result = test_typer.moveStream(input.drawSize[i]);
+      EXPECT_EQ(result,input.results[i]);
+  }
+}
+
+TEST(MonkeyTyperMoveStreamTest,SingleCharIncorrect) {
+  
+}
+
+TEST(MonkeyTyperMoveStreamTest,SingleCharCorrectAtStart) {
 
 }
 
-TEST(MonkeyTyperTest,SingleCharCorrectAtStart) {
+TEST(MonkeyTyperMoveStreamTest,SingleCharCorrectAtEnd) {
 
 }
 
-TEST(MonkeyTyperTest,SingleCharCorrectAtEnd) {
+TEST(MonkeyTyperMoveStreamTest,StreamMatchesQuery) {
 
 }
 
-TEST(MonkeyTyperTest,StreamMatchesQuery) {
+TEST(MonkeyTyperMoveStreamTest,StreamStartsCorrectThenIncorrect) {
 
 }
 
-TEST(MonkeyTyperTest,StreamStartsCorrectThenIncorrect) {
+TEST(MonkeyTyperMoveStreamTest,StreamCorrectAfterIncorrect){
 
 }
 
-TEST(MonkeyTyperTest,StreamCorrectAfterIncorrect){
+TEST(MonkeyTyperMoveStreamTest,CounterCheckOneStream){
 
 }
 
-TEST(MonkeyTyperTest,CounterCheckOneStream){
+TEST(MonkeyTyperMoveStreamTest,DoubleStreamCorrect){
 
 }
 
-TEST(MonkeyTyperTest,DoubleStreamCorrect){
+TEST(MonkeyTyperMoveStreamTest,DoubleStreamInCorrect){
 
 }
 
-TEST(MonkeyTyperTest,DoubleStreamInCorrect){
+TEST(MonkeyTyperMoveStreamTest,DoubleStreamCounters){
 
 }
 
-TEST(MonkeyTyperTest,DoubleStreamCounters){
+TEST(MonkeyTyperMoveStreamTest,CallMoveAfterCompletion){
 
 }
 
-TEST(MonkeyTyperTest,CallMoveAfterCompletion){
+TEST(MonkeyTyperMoveStreamTest,UseNonMockRNG){
 
 }
 

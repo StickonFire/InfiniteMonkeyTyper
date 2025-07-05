@@ -3,6 +3,8 @@
 #include <random>
 using namespace std;
 
+string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
+
 struct TypedChar{
     char letter;
     int position;
@@ -18,10 +20,21 @@ struct TyperMessage {
     Status status;
 };
 
+class LetterSelector {
+    string alphabet;
+    mt19937 rng;
+
+    public:
+        int seed;
+
+        LetterSelector(string alphabet, int seed);
+        char selectCharacter();
+};
+
 class MonkeyTyper {
     public:
         MonkeyTyper(int id, unsigned int seed, string query);
-        MonkeyTyper(int id, mt19937 rng, string query);
+        MonkeyTyper(int id, LetterSelector rng, string query);
         Status moveStream(int charsMoved);
         void startStream(queue<TyperMessage> &channel);
         void pause();
@@ -30,8 +43,8 @@ class MonkeyTyper {
 
     private:
         string query;
-        mt19937 rng;
+        LetterSelector rng;
         int seed;
         int id;
-        int currentSpot;
+        vector<int> currentSpot;
 };
