@@ -1,3 +1,6 @@
+#ifndef MOCKCLASS
+#define MOCKCLASS
+
 #include <random>
 #include "MonkeyTyper.hpp"
 #include <iterator>
@@ -12,3 +15,5 @@ class MockLetterSelector : public LetterSelector {
         vector<char> returnValues;
         vector<char>::iterator itr;
 };
+
+#endif

@@ -16,7 +16,7 @@ void testValues(testInput &input){
   Status result;
   for(int i = 0; i < input.drawSize.size(); i++){
       result = test_typer.moveStream(input.drawSize[i]);
-      EXPECT_EQ(result,input.results[i]);
+      EXPECT_TRUE(result == input.results[i]) << "Status of test mismatches expected result!";
   }
 }
 

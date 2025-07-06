@@ -1,18 +1,26 @@
+#ifndef MONKEY_TYPER
+#define MONKEY_TYPER
+
 #include <string>
 #include <queue>
 #include <random>
 using namespace std;
 
-string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
 struct TypedChar{
     char letter;
     int position;
+
+    public:
+        bool operator==(const TypedChar other) const;
 };
 
 struct Status {
     vector<TypedChar> typeStream;
     bool finished;
+
+    public:
+        bool operator==(Status other);
 };
 
 struct TyperMessage {
@@ -48,3 +56,5 @@ class MonkeyTyper {
         int id;
         vector<int> currentSpot;
 };
+
+#endif

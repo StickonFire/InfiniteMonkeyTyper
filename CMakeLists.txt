@@ -18,8 +18,9 @@ enable_testing()
 
 add_executable(
   MonkeyTyperTest
-  test/MonkeyTyperTest.cpp
   src/MonkeyTyper.cpp
+  test/mockClasses.cpp
+  test/MonkeyTyperTest.cpp
 )
 target_link_libraries(
   MonkeyTyperTest

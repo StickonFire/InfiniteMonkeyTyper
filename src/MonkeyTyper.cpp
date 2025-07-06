@@ -1,4 +1,15 @@
 #include "MonkeyTyper.hpp"
+#include <iterator>
+
+string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+bool Status::operator==(Status other) {
+    return this->finished == other.finished && this->typeStream == other.typeStream;
+}
+
+bool TypedChar::operator==(const TypedChar other) const {
+    return this->letter == other.letter && this->position == other.position;
+}
 
 LetterSelector::LetterSelector(string alphabet,int seed): alphabet(alphabet), rng(seed), seed(seed) {}
 
