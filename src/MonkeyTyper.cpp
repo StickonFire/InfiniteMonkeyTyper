@@ -1,10 +1,37 @@
 #include "MonkeyTyper.hpp"
 #include <iterator>
+#include <iostream>
+#include <string>
 
 string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
 bool Status::operator==(Status other) {
     return this->finished == other.finished && this->typeStream == other.typeStream;
+}
+
+ostream& operator<<(ostream& os, const Status &stat) {
+    os << "Status:" << std::endl << "Finished:" << stat.finished << std::endl;
+    os << "Sent Characters: " << std::endl;
+    for(TypedChar tc: stat.typeStream){
+        os << tc.letter << " ";
+    }
+    for(TypedChar tc: stat.typeStream){
+        os << tc.position << " ";
+    }
+    return os;
+}
+
+string Status::toString(){
+    string result = "Status: \nFinished:";
+    result += (this->finished) ? "true":"false";
+    result += "\nSent Characters: \n";
+    for(TypedChar tc: this->typeStream){
+        result += tc.letter + " ";
+    }
+    for(TypedChar tc: this->typeStream){
+        result += to_string(tc.position) + " ";
+    }
+    return result;
 }
 
 bool TypedChar::operator==(const TypedChar other) const {

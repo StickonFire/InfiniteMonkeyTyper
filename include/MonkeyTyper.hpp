@@ -4,8 +4,10 @@
 #include <string>
 #include <queue>
 #include <random>
+#include <iostream>
 using namespace std;
 
+extern string default_alphabet;
 
 struct TypedChar{
     char letter;
@@ -21,6 +23,8 @@ struct Status {
 
     public:
         bool operator==(Status other);
+        friend ostream& operator<<(ostream& os, const TypedChar& stat);
+        string toString();
 };
 
 struct TyperMessage {
