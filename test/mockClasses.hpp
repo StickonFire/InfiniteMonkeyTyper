@@ -9,7 +9,7 @@ using namespace std;
 class MockLetterSelector : public LetterSelector {
     public:
         MockLetterSelector(vector<char> returnValues);
-        char selectCharacter();
+        char selectCharacter() override;
 
     private:
         vector<char> returnValues;

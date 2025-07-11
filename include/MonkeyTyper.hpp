@@ -33,20 +33,24 @@ struct TyperMessage {
 };
 
 class LetterSelector {
+    public:
+        virtual char selectCharacter() = 0;
+};
+
+class mt19937LetterSelector : public LetterSelector {
     string alphabet;
     mt19937 rng;
 
     public:
         int seed;
 
-        LetterSelector(string alphabet, int seed);
-        char selectCharacter();
+        mt19937LetterSelector(string alphabet, int seed);
+        char selectCharacter() override;
 };
 
 class MonkeyTyper {
     public:
-        MonkeyTyper(int id, unsigned int seed, string query);
-        MonkeyTyper(int id, LetterSelector rng, string query);
+        MonkeyTyper(int id, LetterSelector *rng, string query);
         Status moveStream(int charsMoved);
         void startStream(queue<TyperMessage> &channel);
         void pause();
@@ -55,7 +59,7 @@ class MonkeyTyper {
 
     private:
         string query;
-        LetterSelector rng;
+        LetterSelector* rng;
         int seed;
         int id;
         vector<int> currentSpot;

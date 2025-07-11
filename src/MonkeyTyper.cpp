@@ -38,9 +38,9 @@ bool TypedChar::operator==(const TypedChar other) const {
     return this->letter == other.letter && this->position == other.position;
 }
 
-LetterSelector::LetterSelector(string alphabet,int seed): alphabet(alphabet), rng(seed), seed(seed) {}
+mt19937LetterSelector::mt19937LetterSelector(string alphabet,int seed): alphabet(alphabet), rng(seed), seed(seed) {}
 
-char LetterSelector::selectCharacter(){
+char mt19937LetterSelector::selectCharacter(){
     int draw;
     do
     {
@@ -49,9 +49,7 @@ char LetterSelector::selectCharacter(){
     return alphabet[draw % alphabet.size()];
 }
 
-MonkeyTyper::MonkeyTyper(int id, unsigned int seed, string query) : query(query),rng(default_alphabet,seed), seed(seed), id(id), currentSpot() { }
-
-MonkeyTyper::MonkeyTyper(int id, LetterSelector rng, string query) : query(query), rng(rng), seed(rng.seed), id(id), currentSpot()  {  }
+MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), currentSpot() {}
 
 Status MonkeyTyper::moveStream(int charsMoved){
     return Status{

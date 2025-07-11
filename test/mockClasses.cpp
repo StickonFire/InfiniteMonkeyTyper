@@ -1,6 +1,6 @@
 #include "mockClasses.hpp"
 
-MockLetterSelector::MockLetterSelector(vector<char> selections): LetterSelector("",0){
+MockLetterSelector::MockLetterSelector(vector<char> selections): LetterSelector(){
     returnValues = selections;
     itr = selections.begin();
 }
