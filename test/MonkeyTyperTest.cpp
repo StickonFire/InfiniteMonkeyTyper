@@ -56,7 +56,7 @@ TEST(MonkeyTyperMoveStreamTest,SingleCharCorrectAtEnd) {
     vector<char> rngDraws({'b','a'});
     Status results = {
         vector<TypedChar>({
-            TypedChar{'b',1},
+            TypedChar{'b',0},
             TypedChar{'a',1}
         }),
         true
@@ -152,8 +152,8 @@ TEST(MonkeyTyperMoveStreamTest,DoubleStreamCorrect){
     Status results1 = {
         vector<TypedChar>({
             TypedChar{'a',1},
-            TypedChar{'d',2},
-            TypedChar{'a',3},
+            TypedChar{'d',0},
+            TypedChar{'a',1},
             TypedChar{'b',2}
         }),
         false

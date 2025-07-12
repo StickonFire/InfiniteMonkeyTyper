@@ -2,7 +2,7 @@
 
 MockLetterSelector::MockLetterSelector(vector<char> selections): LetterSelector(){
     returnValues = selections;
-    itr = selections.begin();
+    itr = returnValues.begin();
 }
 
 char MockLetterSelector::selectCharacter(){

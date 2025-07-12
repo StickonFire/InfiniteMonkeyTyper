@@ -62,7 +62,8 @@ class MonkeyTyper {
         LetterSelector* rng;
         int seed;
         int id;
-        vector<int> currentSpot;
+        bool completed;
+        queue<int> currentSpot;
 };
 
 #endif

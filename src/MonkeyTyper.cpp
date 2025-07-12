@@ -2,6 +2,8 @@
 #include <iterator>
 #include <iostream>
 #include <string>
+#include <queue>
+#include <vector>
 
 string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -49,12 +51,39 @@ char mt19937LetterSelector::selectCharacter(){
     return alphabet[draw % alphabet.size()];
 }
 
-MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), currentSpot() {}
+MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), completed(false), currentSpot() {}
 
 Status MonkeyTyper::moveStream(int charsMoved){
-    return Status{
+    vector<TypedChar> typedChars;
+    if(completed){
+        return {typedChars,true};
+    }
+    char selection;
+    int max;
+    for(int i = 0; i < charsMoved; i++){
+        selection = this->rng->selectCharacter();
+        max = 0;
+        this->currentSpot.push(0);
+        int hold;
 
-    };
+        for(int i = this->currentSpot.size(); i > 0; i--){
+            hold = this->currentSpot.front();
+            this->currentSpot.pop();
+            if(selection == this->query[hold]){
+                hold++;
+                this->currentSpot.push(hold);
+                if(hold > max)
+                    max = hold;
+                if(hold == this->query.size()){
+                    completed = true;
+                    typedChars.push_back(TypedChar{selection,max});
+                    return Status{typedChars,true};
+                }
+            }
+        }
+        typedChars.push_back(TypedChar{selection,max});
+    }
+    return Status{typedChars,false};
 }
 
 void MonkeyTyper::startStream(queue<TyperMessage> &channel){
