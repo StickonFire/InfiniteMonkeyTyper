@@ -46,8 +46,8 @@ TEST(MonkeyTyperMoveStreamTest,SingleCharCorrectAtStart) {
         }),
         true
     };
+    vector<Status> result_list({results});
     vector<int> drawSize({3});
-
     testValues(query,rngDraws,vector<Status>({results}),drawSize);
 }
 
@@ -62,8 +62,8 @@ TEST(MonkeyTyperMoveStreamTest,SingleCharCorrectAtEnd) {
         true
     };
     vector<int> drawSize({2});
-
-    testValues(query,rngDraws,vector<Status>({results}),drawSize);
+    vector<Status> result_list({results});
+    testValues(query,rngDraws,result_list,drawSize);
 }
 
 TEST(MonkeyTyperMoveStreamTest,StreamMatchesQuery) {
@@ -78,8 +78,8 @@ TEST(MonkeyTyperMoveStreamTest,StreamMatchesQuery) {
         true
     };
     vector<int> drawSize({3});
-
-    testValues(query,rngDraws,vector<Status>({results}),drawSize);
+    vector<Status> result_list({results});
+    testValues(query,rngDraws,result_list,drawSize);
 }
 
 TEST(MonkeyTyperMoveStreamTest,StreamStartsCorrectThenIncorrect) {
@@ -93,9 +93,10 @@ TEST(MonkeyTyperMoveStreamTest,StreamStartsCorrectThenIncorrect) {
         }),
         false
     };
+    vector<Status> result_list = vector<Status>({results});
     vector<int> drawSize({3});
 
-    testValues(query,rngDraws,vector<Status>({results}),drawSize);
+    testValues(query,rngDraws,result_list,drawSize);
 }
 
 TEST(MonkeyTyperMoveStreamTest,StreamCorrectAfterIncorrect){
@@ -110,8 +111,8 @@ TEST(MonkeyTyperMoveStreamTest,StreamCorrectAfterIncorrect){
         true
     };
     vector<int> drawSize({3});
-
-    testValues(query,rngDraws,vector<Status>({results}),drawSize);
+    vector<Status> result_list({results});
+    testValues(query,rngDraws,result_list,drawSize);
 }
 
 TEST(MonkeyTyperMoveStreamTest,CounterCheckOneStream){
@@ -127,7 +128,8 @@ TEST(MonkeyTyperMoveStreamTest,CounterCheckOneStream){
         true
     };
     vector<int> drawSize1 = {6};
-    testValues(query1,rngDraws1,vector<Status>({results1}),drawSize1);
+    vector<Status> result_list1({results1});
+    testValues(query1,rngDraws1,result_list1,drawSize1);
 
     string query2 = "abad";
     vector<char> rngDraws2({'a','b','a','b','a','d'});
@@ -143,7 +145,8 @@ TEST(MonkeyTyperMoveStreamTest,CounterCheckOneStream){
         true
     };
     vector<int> drawSize2 = {6};
-    testValues(query2,rngDraws2,vector<Status>({results2}),drawSize2);
+    vector<Status> result_list2({results2});
+    testValues(query2,rngDraws2,result_list2,drawSize2);
 }
 
 TEST(MonkeyTyperMoveStreamTest,DoubleStreamCorrect){
@@ -166,7 +169,8 @@ TEST(MonkeyTyperMoveStreamTest,DoubleStreamCorrect){
         true
     };
     vector<int> drawSize1 = {4,4};
-    testValues(query1,rngDraws1,vector<Status>({results1,results2}),drawSize1);
+    vector<Status> expected_results({results1,results2});
+    testValues(query1,rngDraws1,expected_results,drawSize1);
 }
 
 TEST(MonkeyTyperMoveStreamTest,DoubleStreamInCorrect){
