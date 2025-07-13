@@ -48,7 +48,8 @@ TEST(MonkeyTyperMoveStreamTest,SingleCharCorrectAtStart) {
     };
     vector<Status> result_list({results});
     vector<int> drawSize({3});
-    testValues(query,rngDraws,vector<Status>({results}),drawSize);
+    vector<Status> result_list({results});
+    testValues(query,rngDraws,result_list,drawSize);
 }
 
 TEST(MonkeyTyperMoveStreamTest,SingleCharCorrectAtEnd) {
