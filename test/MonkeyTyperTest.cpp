@@ -48,7 +48,6 @@ TEST(MonkeyTyperMoveStreamTest,SingleCharCorrectAtStart) {
     };
     vector<Status> result_list({results});
     vector<int> drawSize({3});
-    vector<Status> result_list({results});
     testValues(query,rngDraws,result_list,drawSize);
 }
 
@@ -244,7 +243,7 @@ TEST(MonkeyTyperMoveStreamTest,CallMoveAfterCompletion){
 }
 
 TEST(MonkeyTyperMoveStreamTest,UseNonMockRNG){
-        
+    
 }
 
 int main(int argc, char **argv) {
