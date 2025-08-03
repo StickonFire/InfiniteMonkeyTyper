@@ -101,15 +101,20 @@ Status MonkeyTyper::moveStream(int charsMoved){
     return Status{typedChars,false};
 }
 
-void MonkeyTyper::startStream(queue<TyperMessage> &channel){
-    
+thread MonkeyTyper::startStream(queue<TyperMessage> &channel){
+    return thread(&MonkeyTyper::stream,this,ref(channel));
 }
-void MonkeyTyper::pause(){
 
+void MonkeyTyper::stream(queue<TyperMessage> &channel){
+}
+
+
+void MonkeyTyper::pause(){
+    isPaused.store(true);
 }
 void MonkeyTyper::unpause(){
-
+    isPaused.store(false);
 }
 void MonkeyTyper::killStream(){
-
+    currentlyRunning.store(false);
 }
