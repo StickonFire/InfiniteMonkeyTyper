@@ -7,7 +7,7 @@
 
 string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-bool Status::operator==(Status other) {
+bool Status::operator==(const Status &other) const {
     return this->finished == other.finished && this->typeStream == other.typeStream;
 }
 
@@ -23,6 +23,10 @@ ostream& operator<<(ostream& os, const Status &stat) {
     return os;
 }
 
+bool TyperMessage::operator==(const TyperMessage &other) const {
+    return this->id == other.id && this->status == other.status;
+}
+
 string Status::toString(){
     string result = "Status: \nFinished:";
     result += (this->finished) ? "true":"false";
@@ -36,7 +40,7 @@ string Status::toString(){
     return result;
 }
 
-bool TypedChar::operator==(const TypedChar other) const {
+bool TypedChar::operator==(const TypedChar &other) const {
     return this->letter == other.letter && this->position == other.position;
 }
 

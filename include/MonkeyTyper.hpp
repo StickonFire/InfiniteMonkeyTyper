@@ -14,7 +14,7 @@ struct TypedChar{
     int position;
 
     public:
-        bool operator==(const TypedChar other) const;
+        bool operator==(const TypedChar &other) const;
 };
 
 struct Status {
@@ -22,7 +22,7 @@ struct Status {
     bool finished;
 
     public:
-        bool operator==(Status other);
+        bool operator==(const Status &other) const;
         friend ostream& operator<<(ostream& os, const TypedChar& stat);
         string toString();
 };
@@ -30,6 +30,9 @@ struct Status {
 struct TyperMessage {
     int id;
     Status status;
+
+    public:
+        bool operator==(const TyperMessage& other) const;
 };
 
 class LetterSelector {
