@@ -5,6 +5,9 @@
 #include <queue>
 #include <random>
 #include <iostream>
+#include <atomic>
+#include <thread>
+#include <mutex>
 using namespace std;
 
 extern string default_alphabet;
@@ -54,6 +57,7 @@ class mt19937LetterSelector : public LetterSelector {
 class MonkeyTyper {
     public:
         MonkeyTyper(int id, LetterSelector *rng, string query);
+        MonkeyTyper(int id, LetterSelector *rng, string query, int packet_size);
         Status moveStream(int charsMoved);
         void startStream(queue<TyperMessage> &channel);
         void pause();
@@ -66,7 +70,13 @@ class MonkeyTyper {
         int seed;
         int id;
         bool completed;
+        int charRecord;
+        int currentLocation;
+        int packet_size;
         queue<int> currentSpot;
+        atomic_bool isPaused;
+        atomic_bool currentlyRunning;
+        mutex startStreamLock;
 };
 
 #endif

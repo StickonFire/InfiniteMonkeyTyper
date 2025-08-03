@@ -4,6 +4,9 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <atomic>
+#include <thread>
+#include <mutex>
 
 string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -55,7 +58,15 @@ char mt19937LetterSelector::selectCharacter(){
     return alphabet[draw % alphabet.size()];
 }
 
-MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), completed(false), currentSpot() {}
+MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), packet_size(8),completed(false), currentSpot() {
+    this->isPaused.store(false);
+    this->currentlyRunning.store(false);
+}
+
+MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packet_size(packet_size),completed(false), currentSpot() {
+    this->isPaused.store(false);
+    this->currentlyRunning.store(false);
+}
 
 Status MonkeyTyper::moveStream(int charsMoved){
     vector<TypedChar> typedChars;
