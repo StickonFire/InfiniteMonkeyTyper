@@ -242,7 +242,6 @@ TEST(MonkeyTyperMoveStreamTest,CallMoveAfterCompletion){
     testValues(query,rngDraws,results,drawSize);
 }
 
-TEST(MonkeyTyperMoveStreamTest,UseNonMockRNG){
     
 }
 
