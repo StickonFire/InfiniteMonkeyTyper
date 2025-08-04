@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <thread>
+#include <chrono>
 
 /**
  * This configuration tests moveStream itself.
