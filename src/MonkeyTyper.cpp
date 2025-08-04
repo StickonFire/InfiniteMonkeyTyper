@@ -106,6 +106,22 @@ thread MonkeyTyper::startStream(queue<TyperMessage> &channel){
 }
 
 void MonkeyTyper::stream(queue<TyperMessage> &channel){
+    startStreamLock.lock();
+    if(currentlyRunning.load()){
+        startStreamLock.unlock();
+        return;
+    }
+    currentlyRunning.store(true);
+    startStreamLock.unlock();
+
+    Status result;
+    while(!completed && currentlyRunning.load()){
+        if(isPaused.load()){
+            continue;
+        }
+        result = moveStream(packet_size);
+        channel.push(TyperMessage{id,result});
+    }
 }
 
 
