@@ -2,7 +2,11 @@
 #include "MonkeyTyper.hpp"
 #include <gtest/gtest.h>
 #include <vector>
+#include <thread>
 
+/**
+ * This configuration tests moveStream itself.
+ */
 
 struct testInput {
     string query;
@@ -242,7 +246,158 @@ TEST(MonkeyTyperMoveStreamTest,CallMoveAfterCompletion){
     testValues(query,rngDraws,results,drawSize);
 }
 
+/**
+ * This configuration tests the stream function
+ */
+
+TEST(MonkeyTyperStreamTest,StreamNodeTest){
+    vector<char> returnValues{'b','a'};
+    MockLetterSelector rng(returnValues);
+
+    string query = "a";
+    int id = 10;
+    MonkeyTyper test(id,&rng,query,1);
+    queue<TyperMessage> results;
     
+    queue<TyperMessage> expectedValues;
+    expectedValues.push(TyperMessage{id,Status{vector<TypedChar>{TypedChar{'b',0}},false}});
+    expectedValues.push(TyperMessage{id,Status{vector<TypedChar>{TypedChar{'a',1}},true}});
+
+    for(int i = 0; i < returnValues.size(); i++)
+        test.stream(results);
+    
+    EXPECT_EQ(expectedValues,results) << "Stream function failed to provide expected results.";
+}
+
+TEST(MonkeyTyperStreamTest,StartTwoStreamProcesses){
+    mt19937LetterSelector rng("b",0);
+    string query = "aaaaa";
+    MonkeyTyper test(1,&rng,query);
+    queue<TyperMessage> queue1;
+    queue<TyperMessage> queue2;
+
+    thread first = test.startStream(queue1);
+    thread second = test.startStream(queue2);
+    cout << "Survived creating threads.\n";
+
+    this_thread::sleep_for(10ms);
+    test.killStream();
+    this_thread::sleep_for(10ms);
+    cout << "Queue Sizes, 1: " << queue1.size() << " 2: " << queue2.size() << "\n";
+    bool onlyOneRan = (queue1.size() > 0 && queue2.size() == 0) || (queue1.size() == 0 && queue2.size() > 0);
+    cout << onlyOneRan << "\n";
+    EXPECT_TRUE(onlyOneRan) << "Error with the queue results.";
+    cout << "Survived Expectation";
+    first.join();
+    second.join();
+}
+
+TEST(MonkeyTyperStreamTest,StreamToCompletion){
+    vector<char> returnValues{'b','a'};
+    MockLetterSelector rng(returnValues);
+    
+    string query = "a";
+    int id = 10;
+    MonkeyTyper test(id,&rng,query,1);
+    queue<TyperMessage> results;
+    
+    queue<TyperMessage> expectedValues;
+    expectedValues.push(TyperMessage{id,Status{vector<TypedChar>{TypedChar{'b',0}},false}});
+    expectedValues.push(TyperMessage{id,Status{vector<TypedChar>{TypedChar{'a',1}},true}});
+
+    thread first = test.startStream(results);
+    
+    first.join();
+
+    
+    EXPECT_EQ(results,expectedValues) << "MonkeyTyper stream did not provide the expected result.";
+
+    queue<TyperMessage> shouldEqual(results);
+
+    thread next = test.startStream(shouldEqual);
+    next.join();
+
+    EXPECT_EQ(results,shouldEqual) << "MonkeyTyper stream let the system restart streaming when it is already completed.";
+}
+
+TEST(MonkeyTyperStreamTest,CheckPausingPriorToStartStream){
+    vector<char> returnValues;
+    MockLetterSelector rng(returnValues);
+
+    string query = "a";
+    MonkeyTyper test(21,&rng,query);
+    queue<TyperMessage> results;
+
+    test.pause();
+
+    thread next = test.startStream(results);
+    this_thread::sleep_for(50ms);
+    EXPECT_EQ(results.size(),0) << "MonkeyTyper Stream is paused, shouldn't have received anything.";
+    test.killStream();
+    next.join();
+}
+
+TEST(MonkeyTyperStreamTest,CheckPauseInteractions){
+    mt19937LetterSelector rng("b",0);
+
+    string query = "aaaaa";
+    MonkeyTyper test(31,&rng,query);
+    queue<TyperMessage> results;
+
+    thread next = test.startStream(results);
+    this_thread::sleep_for(50ms);
+    test.pause();
+    this_thread::sleep_for(50ms);
+    queue<TyperMessage> same(results);
+    this_thread::sleep_for(50ms);
+
+    ASSERT_EQ(same,results) << "MonkeyTyper stream is paused, queue received more after it was paused midway.";
+
+    test.pause();
+    this_thread::sleep_for(50ms);
+
+    ASSERT_EQ(results,same) << "MonkeyTyper pause shouldn't have unpaused if it is called twice.";
+
+    test.unpause();
+
+    this_thread::sleep_for(50ms);
+    test.pause();
+    this_thread::sleep_for(50ms);
+    EXPECT_NE(results,same) << "MonkeyTyper unpause should allow the MonkeyTyper to add to the queue.";
+
+    test.killStream();
+    next.join();
+}
+
+TEST(MonkeyTyperStreamTest,CheckKillStream){
+    mt19937LetterSelector rng("b",0);
+
+    string query = "aaaaa";
+    MonkeyTyper test(41,&rng,query);
+
+    queue<TyperMessage> results;
+    thread testStream = test.startStream(results);
+    this_thread::sleep_for(50ms);
+    test.pause();
+    this_thread::sleep_for(50ms);
+
+    queue<TyperMessage> expectedToEqual(results);
+
+    test.killStream();
+    this_thread::sleep_for(10ms);
+    test.unpause();
+
+    this_thread::sleep_for(50ms);
+    EXPECT_EQ(expectedToEqual,results) << "Unpausing when the stream is killed caused the stream to continue when it shouldn't.";
+
+    thread newTestStream = test.startStream(results);
+    this_thread::sleep_for(50ms);
+    test.pause();
+    EXPECT_NE(expectedToEqual,results) << "Starting a new stream failed to continue operation.";
+
+    test.killStream();
+    testStream.join();
+    newTestStream.join();
 }
 
 int main(int argc, char **argv) {
