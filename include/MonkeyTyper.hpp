@@ -12,6 +12,18 @@ using namespace std;
 
 extern string default_alphabet;
 
+struct ListInfo{
+    int current_location_in_prompt;
+    int guess_stream_size;
+    int guess_distance_in_prompt_record;
+    vector<char> prompt_corresponding_to_last_stream;
+    vector<char> last_stream;
+    vector<bool> last_stream_correctness;
+
+    public:
+        ListInfo(int current_location_in_prompt,int guess_stream_size, int guess_distance_in_prompt_record, 
+            vector<char> &prompt_corresponding_to_last_stream, vector<char> &last_stream,vector<bool> &last_stream_correctness);
+};
 struct TypedChar{
     char letter;
     int position;
@@ -59,11 +71,15 @@ class MonkeyTyper {
         MonkeyTyper(int id, LetterSelector *rng, string query);
         MonkeyTyper(int id, LetterSelector *rng, string query, int packet_size);
         Status moveStream(int charsMoved);
+        /**
+         * Use discouraged until future changes.
+        */
         thread startStream(queue<TyperMessage> &channel);
         void stream(queue<TyperMessage> &channel);
         void pause();
         void unpause();
         void killStream();
+        ListInfo listInfo();
 
     private:
         string query;
@@ -74,6 +90,10 @@ class MonkeyTyper {
         int charRecord;
         int currentLocation;
         int packet_size;
+        vector<char> last_packet_stream;
+        vector<bool> last_packet_correctness;
+        vector<char> last_packet_corresponding_query_letters;
+        string guess_stream;
         queue<int> currentSpot;
         atomic_bool isPaused;
         atomic_bool currentlyRunning;
