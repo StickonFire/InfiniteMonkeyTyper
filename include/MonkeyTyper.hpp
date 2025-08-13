@@ -32,22 +32,11 @@ struct TypedChar{
         bool operator==(const TypedChar &other) const;
 };
 
-struct Status {
-    vector<TypedChar> typeStream;
-    bool finished;
-
-    public:
-        bool operator==(const Status &other) const;
-        friend ostream& operator<<(ostream& os, const TypedChar& stat);
-        string toString();
-};
-
-struct TyperMessage {
-    int id;
-    Status status;
-
-    public:
-        bool operator==(const TyperMessage& other) const;
+enum Status {
+    Paused,
+    Killed,
+    Completed,
+    PacketReady
 };
 
 class LetterSelector {
@@ -70,7 +59,7 @@ class MonkeyTyper {
     public:
         MonkeyTyper(int id, LetterSelector *rng, string query);
         MonkeyTyper(int id, LetterSelector *rng, string query, int packet_size);
-        Status moveStream(int charsMoved);
+        enum Status moveStream(int charsMoved);
         void pause();
         void unpause();
         void killStream();

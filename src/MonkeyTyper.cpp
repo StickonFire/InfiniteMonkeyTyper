@@ -10,38 +10,6 @@
 
 string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-bool Status::operator==(const Status &other) const {
-    return this->finished == other.finished && this->typeStream == other.typeStream;
-}
-
-ostream& operator<<(ostream& os, const Status &stat) {
-    os << "Status:" << std::endl << "Finished:" << stat.finished << std::endl;
-    os << "Sent Characters: " << std::endl;
-    for(TypedChar tc: stat.typeStream){
-        os << tc.letter << " ";
-    }
-    for(TypedChar tc: stat.typeStream){
-        os << tc.position << " ";
-    }
-    return os;
-}
-
-bool TyperMessage::operator==(const TyperMessage &other) const {
-    return this->id == other.id && this->status == other.status;
-}
-
-string Status::toString(){
-    string result = "Status: \nFinished:";
-    result += (this->finished) ? "true":"false";
-    result += "\nSent Characters: \n";
-    for(TypedChar tc: this->typeStream){
-        result += tc.letter + " ";
-    }
-    for(TypedChar tc: this->typeStream){
-        result += to_string(tc.position) + " ";
-    }
-    return result;
-}
 
 bool TypedChar::operator==(const TypedChar &other) const {
     return this->letter == other.letter && this->position == other.position;
@@ -77,10 +45,10 @@ MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query, int packet_s
     this->currentlyRunning.store(false);
 }
 
-Status MonkeyTyper::moveStream(int charsMoved){
+enum Status MonkeyTyper::moveStream(int charsMoved){
     vector<TypedChar> typedChars;
     if(completed){
-        return {typedChars,true};
+        return Completed;
     }
     char selection;
     int max;
@@ -101,14 +69,13 @@ Status MonkeyTyper::moveStream(int charsMoved){
                 if(hold == this->query.size()){
                     completed = true;
                     typedChars.push_back(TypedChar{selection,max});
-                    return Status{typedChars,true};
+                    return Completed;
                 }
             }
         }
         typedChars.push_back(TypedChar{selection,max});
     }
-    return Status{typedChars,false};
-
+    return PacketReady;
 }
 
 void MonkeyTyper::pause(){
