@@ -15,9 +15,9 @@ bool TypedChar::operator==(const TypedChar &other) const {
     return this->letter == other.letter && this->position == other.position;
 }
 
-ListInfo::ListInfo(int current_loc,int guess_stream_size, int guess_distance_in_prompt_record, 
+ListInfo::ListInfo(int id, int current_loc,int guess_stream_size, int guess_distance_in_prompt_record, 
             vector<char> &prompt_corresponding_to_last_stream, vector<char> &last_stream, vector<bool> &correctness): 
-                current_location_in_prompt(current_loc), guess_stream_size(guess_stream_size){
+                id(id), current_location_in_prompt(current_loc), guess_stream_size(guess_stream_size){
     
     this->prompt_corresponding_to_last_stream = prompt_corresponding_to_last_stream;
     this->last_stream = last_stream;
@@ -89,6 +89,6 @@ void MonkeyTyper::killStream(){
 }
 
 ListInfo MonkeyTyper::listInfo(){
-    return ListInfo(currentLocation,guess_stream.size(),charRecord, 
+    return ListInfo(id, currentLocation,guess_stream.size(),charRecord, 
             last_packet_corresponding_query_letters,last_packet_stream,last_packet_correctness);
 }
