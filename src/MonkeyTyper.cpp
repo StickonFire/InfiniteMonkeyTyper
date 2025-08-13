@@ -8,12 +8,12 @@
 #include <thread>
 #include <mutex>
 
-string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
 
 bool TypedChar::operator==(const TypedChar &other) const {
     return this->letter == other.letter && this->position == other.position;
 }
+std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
 ListInfo::ListInfo(int id, int current_loc,int guess_stream_size, int guess_distance_in_prompt_record, 
             vector<char> &prompt_corresponding_to_last_stream, vector<char> &last_stream, vector<bool> &correctness): 
