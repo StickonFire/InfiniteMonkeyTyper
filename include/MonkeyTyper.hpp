@@ -71,11 +71,6 @@ class MonkeyTyper {
         MonkeyTyper(int id, LetterSelector *rng, string query);
         MonkeyTyper(int id, LetterSelector *rng, string query, int packet_size);
         Status moveStream(int charsMoved);
-        /**
-         * Use discouraged until future changes.
-        */
-        thread startStream(queue<TyperMessage> &channel);
-        void stream(queue<TyperMessage> &channel);
         void pause();
         void unpause();
         void killStream();

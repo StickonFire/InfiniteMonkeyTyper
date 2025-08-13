@@ -108,31 +108,8 @@ Status MonkeyTyper::moveStream(int charsMoved){
         typedChars.push_back(TypedChar{selection,max});
     }
     return Status{typedChars,false};
+
 }
-
-thread MonkeyTyper::startStream(queue<TyperMessage> &channel){
-    return thread(&MonkeyTyper::stream,this,ref(channel));
-}
-
-void MonkeyTyper::stream(queue<TyperMessage> &channel){
-    startStreamLock.lock();
-    if(currentlyRunning.load()){
-        startStreamLock.unlock();
-        return;
-    }
-    currentlyRunning.store(true);
-    startStreamLock.unlock();
-
-    Status result;
-    while(!completed && currentlyRunning.load()){
-        if(isPaused.load()){
-            continue;
-        }
-        result = moveStream(packet_size);
-        channel.push(TyperMessage{id,result});
-    }
-}
-
 
 void MonkeyTyper::pause(){
     isPaused.store(true);
