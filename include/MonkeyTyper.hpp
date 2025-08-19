@@ -40,6 +40,12 @@ enum Status {
     PacketReady
 };
 
+enum LetterOutcome {
+    Match,
+    Fallback,
+    NoMatch
+};
+
 class LetterSelector {
     public:
         virtual char selectCharacter() = 0;
@@ -72,13 +78,14 @@ class MonkeyTyper {
         int seed;
         int id;
         bool completed;
-        int charRecord;
-        int currentLocation;
-        int packet_size;
-        vector<char> last_packet_stream;
-        vector<bool> last_packet_correctness;
-        vector<char> last_packet_corresponding_query_letters;
-        std::string guess_stream;
+        int promptRecord;
+        int totalStreamSize;
+        int packetSize;
+        vector<char> packetStream;
+        vector<LetterOutcome> packetCorrectness;
+        vector<char> packetCorrespondingQuery;
+        vector<int> packetBestGuessLocation;
+        std::string guessStream;
         queue<int> currentSpot;
         atomic_bool isPaused;
         atomic_bool currentlyRunning;
