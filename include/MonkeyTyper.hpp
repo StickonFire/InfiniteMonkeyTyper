@@ -51,6 +51,9 @@ class LetterSelector {
         virtual char selectCharacter() = 0;
 };
 
+/**
+ * A basic randomized letter selector that uses the c++'s inbuilt mt19937 random number generator
+ */
 class mt19937LetterSelector : public LetterSelector {
     std::string alphabet;
     mt19937 rng;
@@ -62,11 +65,26 @@ class mt19937LetterSelector : public LetterSelector {
         char selectCharacter() override;
 };
 
+/**
+ * A basic node for the system.
+ * It generates a randomized stream of characters to 
+ */
 class MonkeyTyper {
     public:
         MonkeyTyper(int id, LetterSelector *rng, std::string query);
         MonkeyTyper(int id, LetterSelector *rng, std::string query, int packet_size);
+        /**
+         * Randomly generates and evaluates charsMoved characters in a row.
+         * @param charsMoved: how many characters to generate and evaluate with the query.
+         * @returns a status condition of the stream.
+         */
         enum Status moveStream(int charsMoved);
+        /**
+         * Given a character, and assumed to know the stream of previous characters,
+         * determine both all potential spots that character could be in, and the maximum possible spot.
+         * @param selection the char to evaluate
+         * @returns the maximum possible query position this selection could be.
+         */
         int evaluateSelection(char selection);
         void pause();
         void unpause();
