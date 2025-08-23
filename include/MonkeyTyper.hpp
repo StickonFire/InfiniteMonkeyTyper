@@ -67,6 +67,7 @@ class MonkeyTyper {
         MonkeyTyper(int id, LetterSelector *rng, std::string query);
         MonkeyTyper(int id, LetterSelector *rng, std::string query, int packet_size);
         enum Status moveStream(int charsMoved);
+        int evaluateSelection(char selection);
         void pause();
         void unpause();
         void killStream();

@@ -45,6 +45,34 @@ MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query, int packet_s
     this->currentlyRunning.store(false);
 }
 
+int MonkeyTyper::evaluateSelection(char selection){
+    guessStream += selection;
+    totalStreamSize++;
+
+    int currentMax = 0;
+    this->currentSpot.push(0);
+
+    for(int current_spot_itr = this->currentSpot.size(); current_spot_itr > 0; current_spot_itr--){
+        int hold = this->currentSpot.front();
+        this->currentSpot.pop();
+        if(selection == this->query[hold]){
+            hold++;
+            this->currentSpot.push(hold);
+            if(hold > currentMax){
+                currentMax = hold;
+                if(currentMax > promptRecord){
+                    promptRecord = currentMax;
+                }
+            }
+            if(hold == this->query.size()){
+                this->completed = true;
+                return this->query.size();
+            }
+        }
+    }
+    return currentMax;
+}
+
 enum Status MonkeyTyper::moveStream(int charsMoved){
     vector<TypedChar> typedChars;
     if(completed){
