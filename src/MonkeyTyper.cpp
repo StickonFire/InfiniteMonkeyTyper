@@ -78,30 +78,43 @@ enum Status MonkeyTyper::moveStream(int charsMoved){
     if(completed){
         return Completed;
     }
-    char selection;
-    int max;
-    for(int i = 0; i < charsMoved; i++){
-        selection = this->rng->selectCharacter();
-        max = 0;
-        this->currentSpot.push(0);
-        int hold;
+    else if (isPaused){
+        return Paused;
+    }
 
-        for(int i = this->currentSpot.size(); i > 0; i--){
-            hold = this->currentSpot.front();
-            this->currentSpot.pop();
-            if(selection == this->query[hold]){
-                hold++;
-                this->currentSpot.push(hold);
-                if(hold > max)
-                    max = hold;
-                if(hold == this->query.size()){
-                    completed = true;
-                    typedChars.push_back(TypedChar{selection,max});
-                    return Completed;
-                }
-            }
+    int prevMax;
+    if(packetBestGuessLocation.size() == 0){
+        prevMax = 0;
+    } else {
+        prevMax = packetBestGuessLocation.back();
+    }
+    
+    packetBestGuessLocation = vector<int>(0,packetSize);
+    packetStream = vector<char>('a',packetSize);
+    packetCorrespondingQuery = vector<char>('a',packetSize);
+    packetCorrectness = vector<LetterOutcome>(NoMatch,packetSize);
+
+    //Loops through the entire packet.
+    for(int packet_spot = 0; packet_spot < charsMoved; packet_spot++){
+        char selection = this->rng->selectCharacter();
+        packetStream[packet_spot] = selection;
+        
+        int currentMax = evaluateSelection(selection);
+        
+        if(currentMax == prevMax+1){
+            packetCorrectness[packet_spot] = Match;
         }
-        typedChars.push_back(TypedChar{selection,max});
+        else if(currentMax != 0){
+            packetCorrectness[packet_spot] = Fallback;
+        }
+        else {
+            packetCorrectness[packet_spot] = NoMatch;
+        }
+        packetBestGuessLocation[packet_spot] = currentMax;
+        prevMax = currentMax;
+        if(completed){
+            return Completed;
+        }
     }
     return PacketReady;
 }
