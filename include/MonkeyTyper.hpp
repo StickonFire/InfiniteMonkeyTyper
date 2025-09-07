@@ -66,6 +66,22 @@ class mt19937LetterSelector : public LetterSelector {
 };
 
 /**
+ * A helper class for MonkeyTyper that handles counting how far up the query the stream is at.
+ */
+class PositionHolder{
+    public:
+        queue<int> currentSpot;
+        int currentHighestSpot;
+        int promptRecord;
+        std::string query;
+        
+        PositionHolder(std::string query);
+        PositionHolder(std::string query, queue<int> &currentSpot, int promptRecord);
+        void evaluateSelection(char selection);
+        int getHighestSpot();
+};
+
+/**
  * A basic node for the system.
  * It generates a randomized stream of characters to 
  */

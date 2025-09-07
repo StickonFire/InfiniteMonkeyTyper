@@ -36,6 +36,33 @@ char mt19937LetterSelector::selectCharacter(){
 }
 
 MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), packet_size(8),completed(false), currentSpot() {
+PositionHolder::PositionHolder(std::string query): currentSpot(), currentHighestSpot(0), promptRecord(0), query(query) { }
+
+PositionHolder::PositionHolder(std::string query, queue<int> &currentSpot, int promptRecord): currentSpot(currentSpot), currentHighestSpot(0), promptRecord(promptRecord), query(query) { }
+
+int PositionHolder::getHighestSpot(){
+    return this->currentHighestSpot;
+}
+
+void PositionHolder::evaluateSelection(char selection){
+    this->currentSpot.push(0);
+    currentHighestSpot = 0;
+    for(int current_spot_itr = this->currentSpot.size(); current_spot_itr > 0; current_spot_itr--){
+        int hold = this->currentSpot.front();
+        this->currentSpot.pop();
+        if(selection == this->query[hold]){
+            hold++;
+            this->currentSpot.push(hold);
+            if(hold > currentHighestSpot){
+                currentHighestSpot = hold;
+                if(currentHighestSpot > promptRecord){
+                    promptRecord = currentHighestSpot;
+                }
+            }
+        }
+    }
+}
+
     this->isPaused.store(false);
     this->currentlyRunning.store(false);
 }
