@@ -2,18 +2,15 @@
 #define MOCKCLASS
 
 #include <random>
-#include "MonkeyTyper.hpp"
+#include <gmock/gmock.h>
 #include <iterator>
+
+#include "MonkeyTyper.hpp"
 using namespace std;
 
 class MockLetterSelector : public LetterSelector {
     public:
-        MockLetterSelector(vector<char> returnValues);
-        char selectCharacter() override;
-
-    private:
-        vector<char> returnValues;
-        vector<char>::iterator itr;
+        MOCK_METHOD(char, selectCharacter, (), (override));
 };
 
 #endif

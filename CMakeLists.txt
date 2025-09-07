@@ -19,12 +19,12 @@ enable_testing()
 add_executable(
   MonkeyTyperTest
   src/MonkeyTyper.cpp
-  test/mockClasses.cpp
   test/MonkeyTyperTest.cpp
 )
 target_link_libraries(
   MonkeyTyperTest
   GTest::gtest_main
+  GTest::gmock_main 
 )
 
 target_include_directories( MonkeyTyperTest 
