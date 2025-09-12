@@ -56,11 +56,11 @@ void PositionHolder::evaluateSelection(char selection){
                 currentHighestSpot = hold;
                 if(currentHighestSpot > promptRecord){
                     promptRecord = currentHighestSpot;
-                    if(currentHighestSpot == query.size()){
-                        this->complete = true;
-                        return;
-                    }
                 }
+            }
+            if(currentHighestSpot == query.size()){
+                this->complete = true;
+                return;
             }
         }
     }
