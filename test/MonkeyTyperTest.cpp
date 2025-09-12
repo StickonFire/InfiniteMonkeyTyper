@@ -26,15 +26,15 @@ TEST(PositionHolderEvalSelectionTest,SingleEntryInCurrSpot){
     queue<int> singular;
     singular.push(1);
     PositionHolder bothFail("ab",queue<int>(singular),1);
-    positionHolderTestHelper(bothFail,'c',1,0,queue<int>(),"Both fail");
+    positionHolderTestHelper(bothFail,'c',1,0,queue<int>(),"Both characters incorrect.");
 
     PositionHolder firstCharCorrect("ab",queue<int>(singular),1);
-    positionHolderTestHelper(firstCharCorrect,'a',1,1,queue<int>(singular),"Only first correct.");
+    positionHolderTestHelper(firstCharCorrect,'a',1,1,queue<int>(singular),"Only first query char correct.");
 
     queue<int> expect2;
     expect2.push(2);
     PositionHolder secondCharCorrect("ab",queue<int>(singular),1);
-    positionHolderTestHelper(secondCharCorrect,'b',2,2,queue<int>(expect2),"Only second correct.");
+    positionHolderTestHelper(secondCharCorrect,'b',2,2,queue<int>(expect2),"Only second query char correct.");
 
     queue<int> expectBoth(expect2);
     expectBoth.push(1);
