@@ -83,6 +83,44 @@ TEST(PositionHolderEvalSelectionTest,PromptRecordTest){
     fourthTest.push(1);
     positionHolderTestHelper(test,'a',3,1,fourthTest,false,"Fourth test");
 }
+
+void monkeyTyperEvalSelectionTestHelper(MonkeyTyper &test,int expectedStreamSize, int expectedPromptRecord, string expectedGuessStream, bool expectedCompleteFlag, std::string message){
+    EXPECT_EQ(test.getPromptRecord(),expectedPromptRecord) << "Prompt Record Mismatch in case " << message;
+    EXPECT_EQ(test.getGuessString(),expectedGuessStream) << "Guess Stream Mismatch in case " << message;
+    EXPECT_EQ(test.getTotalStreamSize(),expectedStreamSize) <<"Stream Size Mismatch in case " << message;
+    EXPECT_EQ(test.complete(),expectedCompleteFlag) << "Completion Flag Mismatch in case " << message;
+}
+
+TEST(MonkeyTyperPositionHolderIntegration,TestCorrectSelections){
+    MonkeyTyper test(0, nullptr, "ab");
+    monkeyTyperEvalSelectionTestHelper(test,0,0,"",false, "Case Monkey Typer initialization");
+
+    EXPECT_EQ(test.evaluateSelection('a'),1);
+    monkeyTyperEvalSelectionTestHelper(test,1,1,"a",false, "Case First Char Correct");
+
+    EXPECT_EQ(test.evaluateSelection('b'),2);
+    monkeyTyperEvalSelectionTestHelper(test,2,2,"ab",true, "Case Second Char Correct");
+}
+
+TEST(MonkeyTyperPositionHolderIntegration,IncorrectThenCorrect){
+    queue<int> testCurrSpot;
+    testCurrSpot.push(1);
+    MonkeyTyper test(0,nullptr,PositionHolder("ab",testCurrSpot,1),"ab",0);
+    monkeyTyperEvalSelectionTestHelper(test,0,1,"",false, "Case Initialization with PositionHolder defined.");
+
+    EXPECT_EQ(test.evaluateSelection('a'),1);
+    monkeyTyperEvalSelectionTestHelper(test,1,1,"a",false, "Case Incorrect Char Evaluated");
+
+    EXPECT_EQ(test.evaluateSelection('a'),1);
+    monkeyTyperEvalSelectionTestHelper(test,2,1,"aa",false, "Case Correct Char Evaluated");
+}
+
+TEST(MonkeyTyperPositionHolderIntegration,SingleCharCorrect){
+    MonkeyTyper test(0,nullptr,"a");
+    monkeyTyperEvalSelectionTestHelper(test,0,0,"",false, "Case Initialization");
+    
+    EXPECT_EQ(test.evaluateSelection('a'),1);
+    monkeyTyperEvalSelectionTestHelper(test,1,1,"a",true, "Case Correct Single Char Evaluated");
 }
 
 int main(int argc, char **argv) {
