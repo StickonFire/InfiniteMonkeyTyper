@@ -35,10 +35,9 @@ char mt19937LetterSelector::selectCharacter(){
     return alphabet[draw % alphabet.size()];
 }
 
-MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), packet_size(8),completed(false), currentSpot() {
-PositionHolder::PositionHolder(std::string query): currentSpot(), currentHighestSpot(0), promptRecord(0), query(query) { }
+PositionHolder::PositionHolder(std::string query): currentSpot(), currentHighestSpot(0), promptRecord(0), query(query), complete(false) { }
 
-PositionHolder::PositionHolder(std::string query, queue<int> &currentSpot, int promptRecord): currentSpot(currentSpot), currentHighestSpot(0), promptRecord(promptRecord), query(query) { }
+PositionHolder::PositionHolder(std::string query, queue<int> &currentSpot, int promptRecord): currentSpot(currentSpot), currentHighestSpot(0), promptRecord(promptRecord), query(query), complete(false) { }
 
 int PositionHolder::getHighestSpot(){
     return this->currentHighestSpot;
@@ -57,17 +56,30 @@ void PositionHolder::evaluateSelection(char selection){
                 currentHighestSpot = hold;
                 if(currentHighestSpot > promptRecord){
                     promptRecord = currentHighestSpot;
+                    if(currentHighestSpot == query.size()){
+                        this->complete = true;
+                        return;
+                    }
                 }
             }
         }
     }
 }
 
+MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), packetSize(8),currentSpot(query),
+    promptRecord(0),totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness(){
     this->isPaused.store(false);
     this->currentlyRunning.store(false);
 }
 
-MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packet_size(packet_size),completed(false), currentSpot() {
+MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packetSize(packet_size), currentSpot(query),
+    promptRecord(0),totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
+    this->isPaused.store(false);
+    this->currentlyRunning.store(false);
+}
+
+MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, PositionHolder &currentSpot, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packetSize(packet_size), currentSpot(currentSpot),
+    promptRecord(0),totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
     this->currentlyRunning.store(false);
 }
@@ -82,7 +94,7 @@ int MonkeyTyper::evaluateSelection(char selection){
 
 enum Status MonkeyTyper::moveStream(int charsMoved){
     vector<TypedChar> typedChars;
-    if(completed){
+    if(complete()){
         return Completed;
     }
     else if (isPaused){
@@ -119,7 +131,7 @@ enum Status MonkeyTyper::moveStream(int charsMoved){
         }
         packetBestGuessLocation[packet_spot] = currentMax;
         prevMax = currentMax;
-        if(completed){
+        if(complete()){
             return Completed;
         }
     }
@@ -139,4 +151,18 @@ void MonkeyTyper::killStream(){
 ListInfo MonkeyTyper::listInfo(){
     return ListInfo(id, currentLocation,guess_stream.size(),charRecord, 
             last_packet_corresponding_query_letters,last_packet_stream,last_packet_correctness);
+bool MonkeyTyper::complete(){
+    return currentSpot.complete;
+}
+
+std::string MonkeyTyper::getGuessString(){
+    return guessStream;
+}
+
+int MonkeyTyper::getTotalStreamSize(){
+    return totalStreamSize;
+}
+
+int MonkeyTyper::getPromptRecord(){
+    return promptRecord;
 }

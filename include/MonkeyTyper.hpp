@@ -74,6 +74,7 @@ class PositionHolder{
         int currentHighestSpot;
         int promptRecord;
         std::string query;
+        bool complete;
         
         PositionHolder(std::string query);
         PositionHolder(std::string query, queue<int> &currentSpot, int promptRecord);
@@ -107,13 +108,16 @@ class MonkeyTyper {
         void unpause();
         void killStream();
         ListInfo listInfo();
+        bool complete();
+        int getPromptRecord();
+        int getTotalStreamSize();
+        std::string getGuessString();
 
     private:
         std::string query;
         LetterSelector* rng;
         int seed;
         int id;
-        bool completed;
         int promptRecord;
         int totalStreamSize;
         int packetSize;
