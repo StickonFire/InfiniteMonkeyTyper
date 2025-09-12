@@ -67,19 +67,19 @@ void PositionHolder::evaluateSelection(char selection){
 }
 
 MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), packetSize(8),currentSpot(query),
-    promptRecord(0),totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness(){
+        totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness(){
     this->isPaused.store(false);
     this->currentlyRunning.store(false);
 }
 
 MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packetSize(packet_size), currentSpot(query),
-    promptRecord(0),totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
+        totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
     this->currentlyRunning.store(false);
 }
 
 MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, PositionHolder &currentSpot, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packetSize(packet_size), currentSpot(currentSpot),
-    promptRecord(0),totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
+        totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
     this->currentlyRunning.store(false);
 }
@@ -164,5 +164,5 @@ int MonkeyTyper::getTotalStreamSize(){
 }
 
 int MonkeyTyper::getPromptRecord(){
-    return promptRecord;
+    return currentSpot.promptRecord;
 }

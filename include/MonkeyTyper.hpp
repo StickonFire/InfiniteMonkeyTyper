@@ -118,7 +118,6 @@ class MonkeyTyper {
         LetterSelector* rng;
         int seed;
         int id;
-        int promptRecord;
         int totalStreamSize;
         int packetSize;
         vector<char> packetStream;
