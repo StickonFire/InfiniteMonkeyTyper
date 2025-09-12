@@ -15,15 +15,6 @@ bool TypedChar::operator==(const TypedChar &other) const {
 }
 std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-ListInfo::ListInfo(int id, int current_loc,int guess_stream_size, int guess_distance_in_prompt_record, 
-            vector<char> &prompt_corresponding_to_last_stream, vector<char> &last_stream, vector<bool> &correctness): 
-                id(id), current_location_in_prompt(current_loc), guessStreamSize(guess_stream_size){
-    
-    this->prompt_corresponding_to_last_stream = prompt_corresponding_to_last_stream;
-    this->last_stream = last_stream;
-    this->last_stream_correctness = correctness;
-}
-
 mt19937LetterSelector::mt19937LetterSelector(string alphabet,int seed): alphabet(alphabet), rng(seed), seed(seed) {}
 
 char mt19937LetterSelector::selectCharacter(){
