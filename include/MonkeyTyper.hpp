@@ -14,12 +14,12 @@ extern std::string default_alphabet;
 
 struct ListInfo{
     int id;
-    int current_location_in_prompt;
-    int guess_stream_size;
-    int guess_distance_in_prompt_record;
-    vector<char> prompt_corresponding_to_last_stream;
-    vector<char> last_stream;
-    vector<bool> last_stream_correctness;
+    int currentLocation;
+    int guessStreamSize;
+    int promptRecord;
+    vector<char> correspondingQueryLetters;
+    vector<char> lastStream;
+    vector<LetterOutcome> lastStreamCorrectness;
 
     public:
         ListInfo(int id, int current_location_in_prompt,int guess_stream_size, int guess_distance_in_prompt_record, 
