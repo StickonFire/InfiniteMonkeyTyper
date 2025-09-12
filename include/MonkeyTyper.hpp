@@ -89,6 +89,7 @@ class MonkeyTyper {
     public:
         MonkeyTyper(int id, LetterSelector *rng, std::string query);
         MonkeyTyper(int id, LetterSelector *rng, std::string query, int packet_size);
+        MonkeyTyper(int id, LetterSelector *rng, PositionHolder &currSpot, std::string query, int packet_size);
         /**
          * Randomly generates and evaluates charsMoved characters in a row.
          * @param charsMoved: how many characters to generate and evaluate with the query.
@@ -121,7 +122,7 @@ class MonkeyTyper {
         vector<char> packetCorrespondingQuery;
         vector<int> packetBestGuessLocation;
         std::string guessStream;
-        queue<int> currentSpot;
+        PositionHolder currentSpot;
         atomic_bool isPaused;
         atomic_bool currentlyRunning;
         mutex startStreamLock;
