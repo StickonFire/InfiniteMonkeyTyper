@@ -23,7 +23,7 @@ bool checkQueueEquality(queue<T> first, queue<T> second){
     return firstHolder == secondHolder;
 }
 
-void positionHolderTestHelper(PositionHolder &test, char selection, int expectedPromptRecord, int expectedHighestSpot, queue<int> &expectedCurrSpot,bool expectedComplete, string testName=""){
+void positionHolderTestHelper(PositionHolder &test, char selection, int expectedPromptRecord, int expectedHighestSpot, queue<int> expectedCurrSpot,bool expectedComplete, string testName=""){
     test.evaluateSelection(selection);
 
     EXPECT_EQ(test.getHighestSpot(),expectedHighestSpot) << "Issue with the highest spot determined. Test " << testName;
@@ -35,7 +35,8 @@ void positionHolderTestHelper(PositionHolder &test, char selection, int expected
 
 TEST(PositionHolderEvalSelectionTest,EmptyCurrSpotCheck){
     PositionHolder test("b",queue<int>(),0);
-    positionHolderTestHelper(test,'a',0,0,queue<int>(),false);
+    queue<int> expected;
+    positionHolderTestHelper(test,'a',0,0,expected,false);
 
     queue<int> expectedResult;
     expectedResult.push(1);
@@ -46,7 +47,8 @@ TEST(PositionHolderEvalSelectionTest,SingleEntryInCurrSpot){
     queue<int> singular;
     singular.push(1);
     PositionHolder bothFail("ab",queue<int>(singular),1);
-    positionHolderTestHelper(bothFail,'c',1,0,queue<int>(),false,"Both characters incorrect.");
+    queue<int> empty;
+    positionHolderTestHelper(bothFail,'c',1,0,empty,false,"Both characters incorrect.");
 
     PositionHolder firstCharCorrect("ab",queue<int>(singular),1);
     positionHolderTestHelper(firstCharCorrect,'a',1,1,queue<int>(singular),false,"Only first query char correct.");
