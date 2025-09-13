@@ -46,21 +46,21 @@ TEST(PositionHolderEvalSelectionTest,EmptyCurrSpotCheck){
 TEST(PositionHolderEvalSelectionTest,SingleEntryInCurrSpot){
     queue<int> singular;
     singular.push(1);
-    PositionHolder bothFail("ab",queue<int>(singular),1);
+    PositionHolder bothFail("ab",singular,1);
     queue<int> empty;
     positionHolderTestHelper(bothFail,'c',1,0,empty,false,"Both characters incorrect.");
 
-    PositionHolder firstCharCorrect("ab",queue<int>(singular),1);
+    PositionHolder firstCharCorrect("ab",singular,1);
     positionHolderTestHelper(firstCharCorrect,'a',1,1,queue<int>(singular),false,"Only first query char correct.");
 
     queue<int> expect2;
     expect2.push(2);
-    PositionHolder secondCharCorrect("ab",queue<int>(singular),1);
+    PositionHolder secondCharCorrect("ab",singular,1);
     positionHolderTestHelper(secondCharCorrect,'b',2,2,queue<int>(expect2),true,"Only second query char correct.");
 
     queue<int> expectBoth(expect2);
     expectBoth.push(1);
-    PositionHolder bothCorrect("aa",queue<int>(singular),1);
+    PositionHolder bothCorrect("aa",singular,1);
     positionHolderTestHelper(bothCorrect,'a',2,2,expectBoth,true, "Both chars match.");
 }
 
@@ -107,7 +107,8 @@ TEST(MonkeyTyperPositionHolderIntegration,TestCorrectSelections){
 TEST(MonkeyTyperPositionHolderIntegration,IncorrectThenCorrect){
     queue<int> testCurrSpot;
     testCurrSpot.push(1);
-    MonkeyTyper test(0,nullptr,PositionHolder("ab",testCurrSpot,1),"ab",0);
+    PositionHolder hold("ab",testCurrSpot,1);
+    MonkeyTyper test(0,nullptr,hold,"ab",0);
     monkeyTyperEvalSelectionTestHelper(test,0,1,"",false, "Case Initialization with PositionHolder defined.");
 
     EXPECT_EQ(test.evaluateSelection('a'),1);
