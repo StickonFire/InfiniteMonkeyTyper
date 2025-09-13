@@ -34,7 +34,8 @@ void positionHolderTestHelper(PositionHolder &test, char selection, int expected
 }
 
 TEST(PositionHolderEvalSelectionTest,EmptyCurrSpotCheck){
-    PositionHolder test("b",queue<int>(),0);
+    queue<int> initialCurrSpot;
+    PositionHolder test("b",initialCurrSpot,0);
     queue<int> expected;
     positionHolderTestHelper(test,'a',0,0,expected,false);
 
