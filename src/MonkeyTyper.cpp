@@ -9,11 +9,23 @@
 #include <mutex>
 
 
+std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
 bool TypedChar::operator==(const TypedChar &other) const {
     return this->letter == other.letter && this->position == other.position;
+ListInfo::ListInfo(int id, int currentLocation,int guessStreamSize, int promptRecord, vector<char> &packetStream, 
+    vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation){
+    
+    this->id = id;
+    this->currentLocation = currentLocation;
+    this->guessStreamSize = guessStreamSize;
+    this->promptRecord = promptRecord;
+    this->packetStream = packetStream;
+    this->packetCorrectness = packetCorrectness;
+    this->packetCorrespondingQuery = packetCorrespondingQuery;
+    this->packetBestGuessLocation = packetBestGuessLocation;
 }
-std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
+
 
 mt19937LetterSelector::mt19937LetterSelector(string alphabet,int seed): alphabet(alphabet), rng(seed), seed(seed) {}
 
@@ -141,6 +153,11 @@ void MonkeyTyper::killStream(){
 
 bool MonkeyTyper::complete(){
     return currentSpot.complete;
+}
+
+ListInfo MonkeyTyper::listInfo(){
+    return ListInfo(id, packetBestGuessLocation.back(),totalStreamSize, getPromptRecord(), 
+            packetStream, packetCorrectness, packetCorrespondingQuery, packetBestGuessLocation);
 }
 
 std::string MonkeyTyper::getGuessString(){
