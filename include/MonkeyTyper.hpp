@@ -39,13 +39,14 @@ struct ListInfo{
     int currentLocation;
     int guessStreamSize;
     int promptRecord;
-    vector<char> correspondingQueryLetters;
-    vector<char> lastStream;
-    vector<LetterOutcome> lastStreamCorrectness;
+    vector<char> packetStream;
+    vector<LetterOutcome> packetCorrectness;
+    vector<char> packetCorrespondingQuery;
+    vector<int> packetBestGuessLocation;
 
     public:
-        ListInfo(int id, int current_location_in_prompt,int guess_stream_size, int guess_distance_in_prompt_record, 
-            vector<char> &prompt_corresponding_to_last_stream, vector<char> &last_stream,vector<bool> &last_stream_correctness);
+        ListInfo(int id, int currentLocation,int guessStreamSize, int promptRecord, vector<char> &packetStream, 
+            vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation);
 };
 
 struct PromptInfo{
@@ -104,6 +105,7 @@ class MonkeyTyper {
         MonkeyTyper(int id, LetterSelector *rng, PositionHolder &currSpot, std::string query, int packet_size);
         /**
          * Randomly generates and evaluates charsMoved characters in a row.
+         * It additionally fills up the packet variables to use when any Info() functions are called.
          * @param charsMoved: how many characters to generate and evaluate with the query.
          * @returns a status condition of the stream.
          */
