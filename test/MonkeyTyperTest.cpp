@@ -144,7 +144,7 @@ TEST(MonkeyTyperStreamTest,SingleStream){
     std::string query = "xyz";
     int size = 7;
     vector<char> expectedStream{'x','z','x','y','x','y','z'};
-    vector<LetterOutcome> expectedCorrectness{Match,NoMatch,Match,Match,Fallback,Match,Match};
+    vector<LetterOutcome> expectedCorrectness{Match,NoMatch,Match,Match,Fallback,Match,Complete};
     vector<int> expectedLocation{1,0,1,2,1,2,3};
     vector<char> expectedQuery{'x','y','x','y','x','y','z'};
     Status expectedStatus = Completed;
