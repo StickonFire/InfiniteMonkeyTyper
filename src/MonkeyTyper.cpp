@@ -70,19 +70,19 @@ void PositionHolder::evaluateSelection(char selection){
 MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), packetSize(8),currentSpot(query),
         totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness(){
     this->isPaused.store(false);
-    this->currentlyRunning.store(false);
+    this->currentlyRunning.store(true);
 }
 
 MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packetSize(packet_size), currentSpot(query),
         totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
-    this->currentlyRunning.store(false);
+    this->currentlyRunning.store(true);
 }
 
 MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, PositionHolder &currentSpot, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packetSize(packet_size), currentSpot(currentSpot),
         totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
-    this->currentlyRunning.store(false);
+    this->currentlyRunning.store(true);
 }
 
 int MonkeyTyper::evaluateSelection(char selection){
@@ -100,6 +100,8 @@ enum Status MonkeyTyper::moveStream(int charsMoved){
     }
     else if (isPaused){
         return Paused;
+    } else if (!currentlyRunning) {
+        return Killed;
     }
 
     int prevMax;
