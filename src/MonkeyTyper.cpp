@@ -114,7 +114,7 @@ enum Status MonkeyTyper::moveStream(int charsMoved){
     packetBestGuessLocation = vector<int>(charsMoved,0);
     packetStream = vector<char>(charsMoved,'a');
     packetCorrespondingQuery = vector<char>(charsMoved,'a');
-    packetCorrectness = vector<LetterOutcome>(charsMoved,NoMatch);
+    packetCorrectness = vector<LetterOutcome>(charsMoved,Untracked);
 
     //Loops through the entire packet.
     for(int packet_spot = 0; packet_spot < charsMoved; packet_spot++){
@@ -137,6 +137,7 @@ enum Status MonkeyTyper::moveStream(int charsMoved){
         packetBestGuessLocation[packet_spot] = currentMax;
         prevMax = currentMax;
         if(complete()){
+            packetCorrectness[packet_spot] = Complete;
             return Completed;
         }
     }
