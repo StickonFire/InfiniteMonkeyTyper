@@ -215,6 +215,38 @@ TEST(MonkeyTyperStreamTest,KillStream){
 
     EXPECT_EQ(Killed,test.moveStream(10));
 }
+
+TEST(MonkeyTyperStreamTest,PauseStream){
+    MockLetterSelector mockSelector;
+    std::string query = "xyz";
+    int size = 7;
+    vector<char> expectedStream{'x','z','x','y','x','y','z'};
+    vector<LetterOutcome> expectedCorrectness{Match,NoMatch,Match,Match,Fallback,Match,Complete};
+    vector<int> expectedLocation{1,0,1,2,1,2,3};
+    vector<char> expectedQuery{'x','y','x','y','x','y','z'};
+    Status expectedStatus = Completed;
+
+    EXPECT_CALL(mockSelector,selectCharacter())
+        .Times(7)
+        .WillOnce(Return('x'))
+        .WillOnce(Return('z'))
+        .WillOnce(Return('x'))
+        .WillOnce(Return('y'))
+        .WillOnce(Return('x'))
+        .WillOnce(Return('y'))
+        .WillOnce(Return('z'));
+
+    MonkeyTyper test(0,&mockSelector,query);
+    
+    test.pause();
+    //If moveStream moves uses selectCharacter even once, the next moveStream call will fail.
+    EXPECT_EQ(test.moveStream(7),Paused);
+    EXPECT_EQ(test.getPromptRecord(),0);
+
+    test.unpause();
+    moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus);
+}
+
 int main(int argc, char **argv) {
     cout << "HELLO";
     testing::InitGoogleTest(&argc, argv);
