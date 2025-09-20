@@ -11,8 +11,6 @@
 
 std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-bool TypedChar::operator==(const TypedChar &other) const {
-    return this->letter == other.letter && this->position == other.position;
 ListInfo::ListInfo(int id, int currentLocation,int guessStreamSize, int promptRecord, vector<char> &packetStream, 
     vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation){
     
