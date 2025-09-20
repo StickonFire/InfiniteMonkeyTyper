@@ -30,8 +30,10 @@ enum Status {
 
 enum LetterOutcome {
     Match,
+    Complete,
     Fallback,
-    NoMatch
+    NoMatch,
+    Untracked
 };
 
 struct ListInfo{
