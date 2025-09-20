@@ -127,6 +127,17 @@ TEST(MonkeyTyperPositionHolderIntegration,SingleCharCorrect){
     monkeyTyperEvalSelectionTestHelper(test,1,1,"a",true, "Case Correct Single Char Evaluated");
 }
 
+void moveStreamTestHelper(MonkeyTyper &test, int size, vector<char> &expectedStream, vector<LetterOutcome> &expectedCorrectness, vector<int> &expectedLocation,
+    vector<char> expectedQuery, Status expectedStatus){
+
+    EXPECT_EQ(expectedStatus,test.moveStream(size));
+    ListInfo resultListInfo = test.listInfo();
+    EXPECT_EQ(expectedStream,resultListInfo.packetStream);
+    EXPECT_EQ(expectedLocation,resultListInfo.packetBestGuessLocation);
+    EXPECT_EQ(expectedCorrectness,resultListInfo.packetCorrectness);
+    EXPECT_EQ(expectedQuery,resultListInfo.packetCorrespondingQuery);
+}
+
 TEST(MonkeyTyperStreamTest,SingleStream){
     
     MockLetterSelector mockSelector;
@@ -150,12 +161,7 @@ TEST(MonkeyTyperStreamTest,SingleStream){
 
     MonkeyTyper test(0,&mockSelector,query);
     
-    EXPECT_EQ(expectedStatus,test.moveStream(size));
-    ListInfo resultListInfo = test.listInfo();
-    EXPECT_EQ(expectedStream,resultListInfo.packetStream);
-    EXPECT_EQ(expectedLocation,resultListInfo.packetBestGuessLocation);
-    EXPECT_EQ(expectedCorrectness,resultListInfo.packetCorrectness);
-    EXPECT_EQ(expectedQuery,resultListInfo.packetCorrespondingQuery);
+    moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus);
 }
 int main(int argc, char **argv) {
     cout << "HELLO";
