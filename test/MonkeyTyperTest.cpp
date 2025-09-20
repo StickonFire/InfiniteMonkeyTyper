@@ -163,6 +163,44 @@ TEST(MonkeyTyperStreamTest,SingleStream){
     
     moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus);
 }
+
+TEST(MonkeyTyperStreamTest,DoubleStream){
+    
+    MockLetterSelector mockSelector;
+    std::string query = "pqrstu";
+    int size = 6;
+    vector<char> expectedStream1{'p','q','t','p','q','p'};
+    vector<LetterOutcome> expectedCorrectness1{Match,Match,NoMatch,Match,Match,Fallback};
+    vector<int> expectedLocation1{1,2,0,1,2,1};
+    vector<char> expectedQuery1{'p','q','r','p','q','p'};
+    Status expectedStatus1 = PacketReady;
+
+    vector<char> expectedStream2{'q','r','s','t','u','a'};
+    vector<LetterOutcome> expectedCorrectness2{Match,Match,Match,Match,Complete,Untracked};
+    vector<int> expectedLocation2{2,3,4,5,6,0};
+    vector<char> expectedQuery2{'q','r','s','t','u','a'};
+    Status expectedStatus2 = Completed;
+
+    EXPECT_CALL(mockSelector,selectCharacter())
+        .Times(11)
+        .WillOnce(Return('p'))
+        .WillOnce(Return('q'))
+        .WillOnce(Return('t'))
+        .WillOnce(Return('p'))
+        .WillOnce(Return('q'))
+        .WillOnce(Return('p'))
+
+        .WillOnce(Return('q'))
+        .WillOnce(Return('r'))
+        .WillOnce(Return('s'))
+        .WillOnce(Return('t'))
+        .WillOnce(Return('u'));
+
+    MonkeyTyper test(0,&mockSelector,query);
+    
+    moveStreamTestHelper(test, size, expectedStream1, expectedCorrectness1, expectedLocation1, expectedQuery1, expectedStatus1);
+    moveStreamTestHelper(test, size, expectedStream2, expectedCorrectness2, expectedLocation2, expectedQuery2, expectedStatus2);
+}
 int main(int argc, char **argv) {
     cout << "HELLO";
     testing::InitGoogleTest(&argc, argv);
