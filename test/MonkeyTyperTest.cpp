@@ -201,6 +201,20 @@ TEST(MonkeyTyperStreamTest,DoubleStream){
     moveStreamTestHelper(test, size, expectedStream1, expectedCorrectness1, expectedLocation1, expectedQuery1, expectedStatus1);
     moveStreamTestHelper(test, size, expectedStream2, expectedCorrectness2, expectedLocation2, expectedQuery2, expectedStatus2);
 }
+
+TEST(MonkeyTyperStreamTest,KillStream){
+    MockLetterSelector mockSelector;
+    EXPECT_CALL(mockSelector,selectCharacter()).Times(0);
+    queue<int> x;
+    x.push(4);
+    
+    //PositionHolder intentionally set to crash if it gets called to evaluateSelection.
+    PositionHolder currSpot("",x,4);
+    MonkeyTyper test(0, &mockSelector, currSpot, "", 10);
+    test.killStream();
+
+    EXPECT_EQ(Killed,test.moveStream(10));
+}
 int main(int argc, char **argv) {
     cout << "HELLO";
     testing::InitGoogleTest(&argc, argv);
