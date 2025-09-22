@@ -54,10 +54,17 @@ struct ListInfo{
 struct PromptInfo{
     std::string prompt;
     unsigned int seed;
+    ListInfo listInfo;
+
+    PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo);
 };
 
 struct StreamInfo{
+    unsigned int seed;
     std::string stream;
+    ListInfo listInfo;
+
+    StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo);
 };
 
 class LetterSelector {

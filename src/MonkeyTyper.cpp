@@ -24,6 +24,10 @@ ListInfo::ListInfo(int id, int currentLocation,int guessStreamSize, int promptRe
     this->packetBestGuessLocation = packetBestGuessLocation;
 }
 
+PromptInfo::PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo): seed(seed), prompt(prompt), listInfo(listInfo) { }
+
+StreamInfo::StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo): seed(seed), stream(stream), listInfo(listInfo) { }
+
 
 mt19937LetterSelector::mt19937LetterSelector(string alphabet,int seed): alphabet(alphabet), rng(seed), seed(seed) {}
 
