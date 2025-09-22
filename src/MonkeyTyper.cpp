@@ -167,6 +167,14 @@ ListInfo MonkeyTyper::listInfo(){
             packetStream, packetCorrectness, packetCorrespondingQuery, packetBestGuessLocation);
 }
 
+PromptInfo MonkeyTyper::promptInfo(){
+    return PromptInfo(seed, query, listInfo());
+}
+
+StreamInfo MonkeyTyper::streamInfo(){
+    return StreamInfo(seed, guessStream, listInfo());
+}
+
 std::string MonkeyTyper::getGuessString(){
     return guessStream;
 }

@@ -130,6 +130,8 @@ class MonkeyTyper {
         void unpause();
         void killStream();
         ListInfo listInfo();
+        PromptInfo promptInfo();
+        StreamInfo streamInfo();
         bool complete();
         int getPromptRecord();
         int getTotalStreamSize();
