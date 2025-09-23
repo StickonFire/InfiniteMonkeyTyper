@@ -9,6 +9,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <memory>
 using namespace std;
 
 extern std::string default_alphabet;
@@ -109,9 +110,9 @@ class PositionHolder{
  */
 class MonkeyTyper {
     public:
-        MonkeyTyper(int id, LetterSelector *rng, std::string query);
-        MonkeyTyper(int id, LetterSelector *rng, std::string query, int packet_size);
-        MonkeyTyper(int id, LetterSelector *rng, PositionHolder &currSpot, std::string query, int packet_size);
+        MonkeyTyper(int id, unique_ptr<LetterSelector> rng, std::string query);
+        MonkeyTyper(int id, unique_ptr<LetterSelector> rng, std::string query, int packet_size);
+        MonkeyTyper(int id, unique_ptr<LetterSelector> rng, PositionHolder &currSpot, std::string query, int packet_size);
         /**
          * Randomly generates and evaluates charsMoved characters in a row.
          * It additionally fills up the packet variables to use when any Info() functions are called.
@@ -139,7 +140,7 @@ class MonkeyTyper {
 
     private:
         std::string query;
-        LetterSelector* rng;
+        unique_ptr<LetterSelector> rng;
         int seed;
         int id;
         int totalStreamSize;
@@ -153,6 +154,23 @@ class MonkeyTyper {
         atomic_bool isPaused;
         atomic_bool currentlyRunning;
         mutex startStreamLock;
+};
+
+/**
+ * A class to handle an aggregation of MonkeyTypers.
+ */
+class RingLeader {
+    vector<MonkeyTyper> typers;
+
+    public:
+        void runOnce();
+        vector<ListInfo> listInfo();
+        StreamInfo streamInfo(int id);
+        PromptInfo promptInfo(int id);
+        int createMonkeyTyper(std::string query, int seed);
+        void pauseMonkeyTyper(int id);
+        void unpauseMonkeyTyper(int id);
+        void removeMonkeyTyper(int id);
 };
 
 #endif

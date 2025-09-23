@@ -7,6 +7,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <memory>
 
 
 std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -71,19 +72,19 @@ void PositionHolder::evaluateSelection(char selection){
     }
 }
 
-MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query) : query(query), rng(rng), seed(0), id(id), packetSize(8),currentSpot(query),
+MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, string query) : query(query), rng(std::move(rng)), seed(0), id(id), packetSize(8),currentSpot(query),
         totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness(){
     this->isPaused.store(false);
     this->currentlyRunning.store(true);
 }
 
-MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packetSize(packet_size), currentSpot(query),
+MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, string query, int packet_size) : query(query), rng(std::move(rng)), seed(0), id(id), packetSize(packet_size), currentSpot(query),
         totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
     this->currentlyRunning.store(true);
 }
 
-MonkeyTyper::MonkeyTyper(int id, LetterSelector* rng, PositionHolder &currentSpot, string query, int packet_size) : query(query), rng(rng), seed(0), id(id), packetSize(packet_size), currentSpot(currentSpot),
+MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, PositionHolder &currentSpot, string query, int packet_size) : query(query), rng(std::move(rng)), seed(0), id(id), packetSize(packet_size), currentSpot(currentSpot),
         totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
     this->currentlyRunning.store(true);
