@@ -3,7 +3,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <memory>
+
 using ::testing::Return;
+using ::testing::Mock;
 
 template <class T>
 bool checkQueueEquality(queue<T> first, queue<T> second){
@@ -140,7 +143,7 @@ void moveStreamTestHelper(MonkeyTyper &test, int size, vector<char> &expectedStr
 
 TEST(MonkeyTyperStreamTest,SingleStream){
     
-    MockLetterSelector mockSelector;
+    unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
     std::string query = "xyz";
     int size = 7;
     vector<char> expectedStream{'x','z','x','y','x','y','z'};
@@ -149,7 +152,7 @@ TEST(MonkeyTyperStreamTest,SingleStream){
     vector<char> expectedQuery{'x','y','x','y','x','y','z'};
     Status expectedStatus = Completed;
 
-    EXPECT_CALL(mockSelector,selectCharacter())
+    EXPECT_CALL(*mockSelector,selectCharacter())
         .Times(7)
         .WillOnce(Return('x'))
         .WillOnce(Return('z'))
@@ -159,14 +162,14 @@ TEST(MonkeyTyperStreamTest,SingleStream){
         .WillOnce(Return('y'))
         .WillOnce(Return('z'));
 
-    MonkeyTyper test(0,&mockSelector,query);
+    MonkeyTyper test(0,std::move(mockSelector),query);
     
     moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus);
 }
 
 TEST(MonkeyTyperStreamTest,DoubleStream){
     
-    MockLetterSelector mockSelector;
+    unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
     std::string query = "pqrstu";
     int size = 6;
     vector<char> expectedStream1{'p','q','t','p','q','p'};
@@ -181,7 +184,7 @@ TEST(MonkeyTyperStreamTest,DoubleStream){
     vector<char> expectedQuery2{'q','r','s','t','u','a'};
     Status expectedStatus2 = Completed;
 
-    EXPECT_CALL(mockSelector,selectCharacter())
+    EXPECT_CALL(*mockSelector,selectCharacter())
         .Times(11)
         .WillOnce(Return('p'))
         .WillOnce(Return('q'))
@@ -196,28 +199,28 @@ TEST(MonkeyTyperStreamTest,DoubleStream){
         .WillOnce(Return('t'))
         .WillOnce(Return('u'));
 
-    MonkeyTyper test(0,&mockSelector,query);
+    MonkeyTyper test(0,std::move(mockSelector),query);
     
     moveStreamTestHelper(test, size, expectedStream1, expectedCorrectness1, expectedLocation1, expectedQuery1, expectedStatus1);
     moveStreamTestHelper(test, size, expectedStream2, expectedCorrectness2, expectedLocation2, expectedQuery2, expectedStatus2);
 }
 
 TEST(MonkeyTyperStreamTest,KillStream){
-    MockLetterSelector mockSelector;
-    EXPECT_CALL(mockSelector,selectCharacter()).Times(0);
+    unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*mockSelector,selectCharacter()).Times(0);
     queue<int> x;
     x.push(4);
     
     //PositionHolder intentionally set to crash if it gets called to evaluateSelection.
     PositionHolder currSpot("",x,4);
-    MonkeyTyper test(0, &mockSelector, currSpot, "", 10);
+    MonkeyTyper test(0, std::move(mockSelector), currSpot, "", 10);
     test.killStream();
 
     EXPECT_EQ(Killed,test.moveStream(10));
 }
 
 TEST(MonkeyTyperStreamTest,PauseStream){
-    MockLetterSelector mockSelector;
+    unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
     std::string query = "xyz";
     int size = 7;
     vector<char> expectedStream{'x','z','x','y','x','y','z'};
@@ -226,7 +229,7 @@ TEST(MonkeyTyperStreamTest,PauseStream){
     vector<char> expectedQuery{'x','y','x','y','x','y','z'};
     Status expectedStatus = Completed;
 
-    EXPECT_CALL(mockSelector,selectCharacter())
+    EXPECT_CALL(*mockSelector,selectCharacter())
         .Times(7)
         .WillOnce(Return('x'))
         .WillOnce(Return('z'))
@@ -236,7 +239,7 @@ TEST(MonkeyTyperStreamTest,PauseStream){
         .WillOnce(Return('y'))
         .WillOnce(Return('z'));
 
-    MonkeyTyper test(0,&mockSelector,query);
+    MonkeyTyper test(0,std::move(mockSelector),query);
     
     test.pause();
     //If moveStream moves uses selectCharacter even once, the next moveStream call will fail.

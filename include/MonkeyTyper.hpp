@@ -70,6 +70,7 @@ struct StreamInfo{
 
 class LetterSelector {
     public:
+        virtual ~LetterSelector() = default;
         virtual char selectCharacter() = 0;
 };
 
