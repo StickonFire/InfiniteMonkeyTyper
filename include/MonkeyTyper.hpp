@@ -157,21 +157,4 @@ class MonkeyTyper {
         mutex startStreamLock;
 };
 
-/**
- * A class to handle an aggregation of MonkeyTypers.
- */
-class RingLeader {
-    vector<MonkeyTyper> typers;
-
-    public:
-        void runOnce();
-        vector<ListInfo> listInfo();
-        StreamInfo streamInfo(int id);
-        PromptInfo promptInfo(int id);
-        int createMonkeyTyper(std::string query, int seed);
-        void pauseMonkeyTyper(int id);
-        void unpauseMonkeyTyper(int id);
-        void removeMonkeyTyper(int id);
-};
-
 #endif
