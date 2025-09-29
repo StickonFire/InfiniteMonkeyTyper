@@ -19,6 +19,7 @@ enable_testing()
 add_executable(
   MonkeyTyperTest
   src/MonkeyTyper.cpp
+  src/RingLeader.cpp
   test/MonkeyTyperTest.cpp
 )
 target_link_libraries(
@@ -27,7 +28,8 @@ target_link_libraries(
   GTest::gmock_main 
 )
 
-target_include_directories( MonkeyTyperTest 
+target_include_directories( 
+  MonkeyTyperTest 
   PUBLIC include
 )
 
