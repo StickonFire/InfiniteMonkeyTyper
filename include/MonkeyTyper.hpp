@@ -107,7 +107,7 @@ class PositionHolder{
 
 /**
  * A basic node for the system.
- * It generates a randomized stream of characters to 
+ * It generates a randomized stream of characters until it reproduces a provided query.
  */
 class MonkeyTyper {
     public:

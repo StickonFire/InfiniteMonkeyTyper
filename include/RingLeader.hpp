@@ -52,6 +52,7 @@ class RingLeader {
         PromptInfo promptInfo(int id);
         /**
          * Generates a monkeyTyper using the query and the seed. It additionally assigns an id to the MonkeyTyper.
+         * @return id of the generated MonkeyTyper
          */
         int createMonkeyTyper(std::string query, int seed);
         void pauseMonkeyTyper(int id);
