@@ -3,12 +3,25 @@
 #include "MonkeyTyper.hpp"
 
 #include <vector>
+#include <memory>
+
+class IdMaker{
+    
+    protected:
+        virtual ~IdMaker() = default;
+
+    public:
+        virtual int generateId() = 0;
+        virtual void releaseId(int toRelease) = 0;
+};
+
 
 /**
  * A class to handle an aggregation of MonkeyTypers.
  */
 class RingLeader {
     vector<MonkeyTyper> typers;
+    unique_ptr<IdMaker> idGenerator;
 
     public:
         /**
