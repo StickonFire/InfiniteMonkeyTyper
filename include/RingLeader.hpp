@@ -3,6 +3,7 @@
 #include "MonkeyTyper.hpp"
 
 #include <vector>
+#include <map>
 #include <memory>
 
 struct MonkeyTyperStatus {
@@ -30,7 +31,7 @@ class IdMaker{
  * A class to handle an aggregation of MonkeyTypers.
  */
 class RingLeader {
-    vector<MonkeyTyper> typers;
+    std::map<int,MonkeyTyper> typers;
     unique_ptr<IdMaker> idGenerator;
 
     public:
