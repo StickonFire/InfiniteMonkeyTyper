@@ -5,6 +5,16 @@
 #include <vector>
 #include <memory>
 
+struct MonkeyTyperStatus {
+    int id;
+    Status status;
+};
+
+struct IdAndListInfo {
+    int id;
+    ListInfo listInfo;
+};
+
 class IdMaker{
     
     protected:
@@ -29,11 +39,11 @@ class RingLeader {
          * @param n the number of characters each typer runs, unless they are paused or completed.
          * @return a vector of pairs, containing an id and status of each monkeyTyper.
          */
-        vector<pair<int,Status>> runNCharacters(int n);
+        vector<MonkeyTyperStatus> runNCharacters(int n);
         /**
          * Extracts from the typers a vector of ids and ListInfo of each typer.
          */
-        vector<pair<int,ListInfo>> listInfo(void);
+        vector<IdAndListInfo> listInfo();
         /**
          * Given a valid id, returns a stream info of the monkeyTyper associated with that id.
          */
