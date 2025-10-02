@@ -26,6 +26,27 @@ class IdMaker{
         virtual void releaseId(int toRelease) = 0;
 };
 
+/**
+ * A simple IdMaker that merely increments the id given every time an id is asked for.
+ */
+class CounterIdMaker : IdMaker{
+    unsigned int counter;
+
+    public:
+        /**
+         * Generrates an idMaker that assigns an id numerically in order.
+         * @param startCounter first id to use and where the counter to assign ids start.
+         */
+        Counter(int startCounter);
+        /**
+         * Generates a unique id. 
+         */
+        int generateId();
+        /**
+         * This function releases the id provided, allowing it to be used again.
+         */
+        void releaseId(int toRelease);
+};
 
 /**
  * A class to handle an aggregation of MonkeyTypers.
