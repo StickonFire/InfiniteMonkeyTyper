@@ -48,6 +48,7 @@ struct ListInfo{
     vector<int> packetBestGuessLocation;
 
     public:
+        ListInfo();
         ListInfo(int id, int currentLocation,int guessStreamSize, int promptRecord, vector<char> &packetStream, 
             vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation);
 };
@@ -57,6 +58,7 @@ struct PromptInfo{
     unsigned int seed;
     ListInfo listInfo;
 
+    PromptInfo();
     PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo);
 };
 
@@ -65,6 +67,7 @@ struct StreamInfo{
     std::string stream;
     ListInfo listInfo;
 
+    StreamInfo();
     StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo);
 };
 

@@ -12,6 +12,9 @@
 
 std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
+ListInfo::ListInfo(): id(0), currentLocation(0), guessStreamSize(0), promptRecord(0), packetStream(), 
+    packetCorrectness(), packetCorrespondingQuery(), packetBestGuessLocation() { }
+  
 ListInfo::ListInfo(int id, int currentLocation,int guessStreamSize, int promptRecord, vector<char> &packetStream, 
     vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation){
     
@@ -25,7 +28,11 @@ ListInfo::ListInfo(int id, int currentLocation,int guessStreamSize, int promptRe
     this->packetBestGuessLocation = packetBestGuessLocation;
 }
 
+PromptInfo::PromptInfo(): seed(0), prompt(), listInfo() { }
+
 PromptInfo::PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo): seed(seed), prompt(prompt), listInfo(listInfo) { }
+
+StreamInfo::StreamInfo(): seed(0), stream(), listInfo() { }
 
 StreamInfo::StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo): seed(seed), stream(stream), listInfo(listInfo) { }
 
