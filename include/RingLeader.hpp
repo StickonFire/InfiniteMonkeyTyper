@@ -37,7 +37,7 @@ class CounterIdMaker : IdMaker{
          * Generrates an idMaker that assigns an id numerically in order.
          * @param startCounter first id to use and where the counter to assign ids start.
          */
-        Counter(int startCounter);
+        CounterIdMaker(int startCounter);
         /**
          * Generates a unique id. 
          */
