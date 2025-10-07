@@ -46,6 +46,11 @@ class CounterIdMaker : IdMaker{
          * This function releases the id provided, allowing it to be used again.
          */
         void releaseId(int toRelease);
+
+        int getCounter();
+
+        std::set<int> getUsedIds();
+
 };
 
 /**
