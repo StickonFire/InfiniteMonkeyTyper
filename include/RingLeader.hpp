@@ -61,6 +61,7 @@ class RingLeader {
     unique_ptr<IdMaker> idGenerator;
 
     public:
+        RingLeader(std::map<int,MonkeyTyper> &typers, unique_ptr<IdMaker> idGenerator);
         /**
          * Given an integer n, runs each of its typers n characters forward, unless all typers reach completion.
          * @param n the number of characters each typer runs, unless they are paused or completed.
