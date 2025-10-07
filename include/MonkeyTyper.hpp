@@ -114,6 +114,7 @@ class PositionHolder{
  */
 class MonkeyTyper {
     public:
+        MonkeyTyper(MonkeyTyper&& other);
         MonkeyTyper(int id, unique_ptr<LetterSelector> rng, std::string query);
         MonkeyTyper(int id, unique_ptr<LetterSelector> rng, std::string query, int packet_size);
         MonkeyTyper(int id, unique_ptr<LetterSelector> rng, PositionHolder &currSpot, std::string query, int packet_size);
