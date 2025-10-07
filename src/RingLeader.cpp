@@ -2,6 +2,7 @@
 #include "MonkeyTyper.hpp"
 
 #include <set>
+#include <map>
 
 CounterIdMaker::CounterIdMaker(int startCounter, std::set<int> usedIds): counter(startCounter), usedIds(usedIds) { }
 
@@ -26,6 +27,12 @@ int CounterIdMaker::getCounter(){
 
 std::set<int> CounterIdMaker::getUsedIds(){
     return this->usedIds;
+}
+
+RingLeader::RingLeader(std::map<int,MonkeyTyper>& typers, unique_ptr<IdMaker> idmaker): typers(), idGenerator(std::move(idmaker)) {
+    for(std::map<int,MonkeyTyper>::iterator itr = typers.begin(); itr != typers.end(); itr++){
+        this->typers.insert(std::make_pair(itr->first,std::move(itr->second)));
+    }
 }
 
 vector<MonkeyTyperStatus> RingLeader::runNCharacters(int n){
