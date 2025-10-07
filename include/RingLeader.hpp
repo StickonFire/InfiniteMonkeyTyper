@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <set>
 
 struct MonkeyTyperStatus {
     int id;
@@ -29,13 +30,14 @@ class IdMaker{
  */
 class CounterIdMaker : IdMaker{
     unsigned int counter;
+    std::set<int> usedIds;
 
     public:
         /**
          * Generrates an idMaker that assigns an id numerically in order.
          * @param startCounter first id to use and where the counter to assign ids start.
          */
-        CounterIdMaker(int startCounter);
+        CounterIdMaker(int startCounter, std::set<int> usedIds);
         /**
          * Generates a unique id. 
          */
