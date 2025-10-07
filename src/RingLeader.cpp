@@ -5,6 +5,15 @@
 
 CounterIdMaker::CounterIdMaker(int startCounter, std::set<int> usedIds): counter(startCounter), usedIds(usedIds) { }
 
+int CounterIdMaker::generateId(){
+    while(usedIds.find(counter) != usedIds.end()){
+        counter++;
+    }
+    int id = counter;
+    usedIds.insert(id);
+    counter++;
+    return id;
+}
 
 int CounterIdMaker::getCounter(){
     return this->counter;
