@@ -53,3 +53,37 @@ TEST(CounterIdGenerateId,CollisionSkipTwo){
     std::set<int> endSet{1,2,3,4};
     counterIdTestHelper(starterCounter,expectedId,expectedNextId,starterSet,endSet);
 }
+
+void releaseIdHelper(int starterCounter, int idToRemove, int expectedId, std::set<int> &starterUsedIds, std::set<int> &afterCallUsedIds){
+    CounterIdMaker test(starterCounter,starterUsedIds);
+    test.releaseId(idToRemove);
+    EXPECT_EQ(test.getUsedIds(),afterCallUsedIds);
+    EXPECT_EQ(test.generateId(),expectedId);
+}
+
+TEST(CounterIdReleaseId,Empty){
+    int starterCounter = 0;
+    int idToRemove = 0;
+    int expectedId = 0;
+    std::set<int> starterUsedIds;
+    std::set<int> afterCallUsedIds;
+    releaseIdHelper(starterCounter, idToRemove, expectedId, starterUsedIds, afterCallUsedIds);
+}
+
+TEST(CounterIdReleaseId,Missed){
+    int starterCounter = 125;
+    int idToRemove = 127;
+    int expectedId = 126;
+    std::set<int> starterUsedIds{125};
+    std::set<int> afterCallUsedIds{125};
+    releaseIdHelper(starterCounter, idToRemove, expectedId, starterUsedIds, afterCallUsedIds);
+}
+
+TEST(CounterIdReleaseId,Hit){
+    int starterCounter = 170;
+    int idToRemove = 170;
+    int expectedId = 170;
+    std::set<int> starterUsedIds{169,170,171};
+    std::set<int> afterCallUsedIds{169,171};
+    releaseIdHelper(starterCounter, idToRemove, expectedId, starterUsedIds, afterCallUsedIds);
+}
