@@ -1,6 +1,19 @@
 #include "RingLeader.hpp"
 #include "MonkeyTyper.hpp"
 
+#include <set>
+
+CounterIdMaker::CounterIdMaker(int startCounter, std::set<int> usedIds): counter(startCounter), usedIds(usedIds) { }
+
+
+int CounterIdMaker::getCounter(){
+    return this->counter;
+}
+
+std::set<int> CounterIdMaker::getUsedIds(){
+    return this->usedIds;
+}
+
 vector<MonkeyTyperStatus> RingLeader::runNCharacters(int n){
     return vector<MonkeyTyperStatus>();
 }
