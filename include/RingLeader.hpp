@@ -17,11 +17,9 @@ struct IdAndListInfo {
 };
 
 class IdMaker{
-    
-    protected:
-        virtual ~IdMaker() = default;
 
     public:
+        virtual ~IdMaker() = default;
         virtual int generateId() = 0;
         virtual void releaseId(int toRelease) = 0;
 };
