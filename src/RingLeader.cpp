@@ -15,6 +15,11 @@ int CounterIdMaker::generateId(){
     return id;
 }
 
+void CounterIdMaker::releaseId(int id){
+    if(usedIds.find(counter) != usedIds.end())
+        usedIds.erase(usedIds.find(counter));
+}
+
 int CounterIdMaker::getCounter(){
     return this->counter;
 }
