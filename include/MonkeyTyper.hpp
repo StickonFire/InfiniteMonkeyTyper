@@ -157,7 +157,6 @@ class MonkeyTyper {
         PositionHolder currentSpot;
         atomic_bool isPaused;
         atomic_bool currentlyRunning;
-        mutex startStreamLock;
 };
 
 #endif
