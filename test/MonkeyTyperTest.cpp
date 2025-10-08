@@ -250,6 +250,21 @@ TEST(MonkeyTyperStreamTest,PauseStream){
     moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus);
 }
 
+TEST(MonkeyTyperStreamTest,CompleteSupercedingRest){
+    unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*mockSelector,selectCharacter())
+        .Times(1)
+        .WillOnce(Return('a'));
+    std::string query = "a";
+    int size = 0;
+    MonkeyTyper test(0,std::move(mockSelector),query);
+    EXPECT_EQ(test.moveStream(1),Completed);
+    test.pause();
+    EXPECT_EQ(test.moveStream(1),Completed);
+    test.killStream();
+    EXPECT_EQ(test.moveStream(1),Completed);
+}
+
 int main(int argc, char **argv) {
     cout << "HELLO";
     testing::InitGoogleTest(&argc, argv);
