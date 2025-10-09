@@ -3,6 +3,7 @@
 #include "MonkeyTyper.hpp"
 
 #include <vector>
+#include <optional>
 #include <map>
 #include <memory>
 #include <set>
@@ -75,8 +76,8 @@ class RingLeader {
         /**
          * Given a valid id, returns a stream info of the monkeyTyper associated with that id.
          */
-        StreamInfo streamInfo(int id);
-        PromptInfo promptInfo(int id);
+        std::optional<StreamInfo> streamInfo(int id);
+        std::optional<PromptInfo> promptInfo(int id);
         /**
          * Generates a monkeyTyper using the query and the seed. It additionally assigns an id to the MonkeyTyper.
          * @return id of the generated MonkeyTyper

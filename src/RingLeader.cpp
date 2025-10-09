@@ -2,6 +2,7 @@
 #include "MonkeyTyper.hpp"
 
 #include <set>
+#include <optional>
 #include <map>
 
 CounterIdMaker::CounterIdMaker(int startCounter, std::set<int> usedIds): counter(startCounter), usedIds(usedIds) { }
@@ -43,11 +44,11 @@ vector<IdAndListInfo> RingLeader::listInfo(){
     return vector<IdAndListInfo>();
 }
 
-StreamInfo RingLeader::streamInfo(int id){
+std::optional<StreamInfo> RingLeader::streamInfo(int id){
     return StreamInfo();
 }
 
-PromptInfo RingLeader::promptInfo(int id){
+std::optional<PromptInfo> RingLeader::promptInfo(int id){
     return PromptInfo();
 }
 
