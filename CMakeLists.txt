@@ -22,6 +22,7 @@ add_executable(
   src/RingLeader.cpp
   test/MonkeyTyperTest.cpp
   test/RingLeaderTest.cpp
+  test/CounterIdMakerTest.cpp
 )
 target_link_libraries(
   MonkeyTyperTest
