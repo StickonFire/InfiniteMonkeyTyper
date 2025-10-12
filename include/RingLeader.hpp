@@ -24,7 +24,7 @@ class IdMaker{
 /**
  * A simple IdMaker that merely increments the id given every time an id is asked for.
  */
-class CounterIdMaker : IdMaker{
+class CounterIdMaker : public IdMaker{
     unsigned int counter;
     std::set<int> usedIds;
 
