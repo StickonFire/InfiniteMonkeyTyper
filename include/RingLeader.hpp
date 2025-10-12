@@ -13,11 +13,6 @@ struct MonkeyTyperStatus {
     Status status;
 };
 
-struct IdAndListInfo {
-    int id;
-    ListInfo listInfo;
-};
-
 class IdMaker{
 
     public:
@@ -72,7 +67,7 @@ class RingLeader {
         /**
          * Extracts from the typers a vector of ids and ListInfo of each typer.
          */
-        vector<IdAndListInfo> listInfo();
+        vector<ListInfo> listInfo();
         /**
          * Given a valid id, returns a stream info of the monkeyTyper associated with that id.
          */
