@@ -40,8 +40,8 @@ vector<MonkeyTyperStatus> RingLeader::runNCharacters(int n){
     return vector<MonkeyTyperStatus>();
 }
 
-vector<IdAndListInfo> RingLeader::listInfo(){
-    return vector<IdAndListInfo>();
+vector<ListInfo> RingLeader::listInfo(){
+    return vector<ListInfo>();
 }
 
 std::optional<StreamInfo> RingLeader::streamInfo(int id){
