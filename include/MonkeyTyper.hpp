@@ -48,6 +48,7 @@ struct ListInfo{
     vector<int> packetBestGuessLocation;
 
     public:
+        bool operator==(const ListInfo &other) const;
         ListInfo();
         ListInfo(int id, int currentLocation,int guessStreamSize, int promptRecord, vector<char> &packetStream, 
             vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation);

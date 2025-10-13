@@ -28,6 +28,17 @@ ListInfo::ListInfo(int id, int currentLocation,int guessStreamSize, int promptRe
     this->packetBestGuessLocation = packetBestGuessLocation;
 }
 
+bool ListInfo::operator==(const ListInfo &other) const {
+    return this->id == other.id
+        && this->currentLocation == other.currentLocation
+        && this->guessStreamSize == other.guessStreamSize
+        && this->promptRecord == other.promptRecord
+        && this->packetStream == other.packetStream
+        && this->packetCorrectness == other.packetCorrectness
+        && this->packetCorrespondingQuery == other.packetCorrespondingQuery
+        && this->packetBestGuessLocation == other.packetBestGuessLocation;
+}
+
 PromptInfo::PromptInfo(): seed(0), prompt(), listInfo() { }
 
 PromptInfo::PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo): seed(seed), prompt(prompt), listInfo(listInfo) { }
