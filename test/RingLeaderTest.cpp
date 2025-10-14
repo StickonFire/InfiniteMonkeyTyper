@@ -3,6 +3,14 @@
 
 #include <memory>
 #include <gtest/gtest.h>
+/**
+ * Wholistic tests for the following functions:
+ *  - Constructor
+ *  - runNCharacters
+ *  - listInfo
+ *  - promptInfo
+ *  - streamInfo
+ */
 TEST(RingLeaderWholisticTest,EmptyList){
     std::map<int,MonkeyTyper> empty;
     std::set<int> usedIds;
