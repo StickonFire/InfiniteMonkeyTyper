@@ -12,6 +12,7 @@ struct MonkeyTyperStatus {
     int id;
     Status status;
 
+    MonkeyTyperStatus(int id, Status status);
     bool operator==(const MonkeyTyperStatus &other) const;
 };
 

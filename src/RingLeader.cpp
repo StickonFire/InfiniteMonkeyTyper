@@ -5,6 +5,8 @@
 #include <optional>
 #include <map>
 
+MonkeyTyperStatus::MonkeyTyperStatus(int id, Status status): id(id), status(status) { }
+
 bool MonkeyTyperStatus::operator==(const MonkeyTyperStatus &other) const {
     return this->id == other.id
         && this->status == other.status;
