@@ -11,6 +11,8 @@
 struct MonkeyTyperStatus {
     int id;
     Status status;
+
+    bool operator==(const MonkeyTyperStatus &other) const;
 };
 
 class IdMaker{

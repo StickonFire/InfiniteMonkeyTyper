@@ -5,6 +5,11 @@
 #include <optional>
 #include <map>
 
+bool MonkeyTyperStatus::operator==(const MonkeyTyperStatus &other) const {
+    return this->id == other.id
+        && this->status == other.status;
+}
+
 CounterIdMaker::CounterIdMaker(int startCounter, std::set<int> usedIds): counter(startCounter), usedIds(usedIds) { }
 
 int CounterIdMaker::generateId(){
