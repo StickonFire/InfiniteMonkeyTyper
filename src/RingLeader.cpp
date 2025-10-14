@@ -52,11 +52,11 @@ vector<ListInfo> RingLeader::listInfo(){
 }
 
 std::optional<StreamInfo> RingLeader::streamInfo(int id){
-    return StreamInfo();
+    return { };
 }
 
 std::optional<PromptInfo> RingLeader::promptInfo(int id){
-    return PromptInfo();
+    return { };
 }
 
 int RingLeader::createMonkeyTyper(std::string query, int seed){
