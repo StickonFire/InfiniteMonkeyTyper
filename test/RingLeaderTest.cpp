@@ -1,26 +1,9 @@
 #include "RingLeader.hpp"
+#include "mockClasses.hpp"
 
 #include <memory>
 #include <gtest/gtest.h>
-
-
-TEST(RingLeaderSingularInfoTest,EmptyList){
-
-}
-
-TEST(RingLeaderSingularInfoTest,IdMiss){
-
-}
-
-TEST(RingLeaderSingularInfoTest,OneMonkeyTyper){
-
-}
-
-TEST(RingLeaderSingularInfoTest,TwoMonkeysOneUnrun){
-
-}
-
-TEST(RingLeaderListInfoTest,EmptyList){
+TEST(RingLeaderWholisticTest,EmptyList){
     std::map<int,MonkeyTyper> empty;
     std::set<int> used_ids;
     unique_ptr<CounterIdMaker> idGenerator = make_unique<CounterIdMaker>(50,used_ids);
@@ -29,11 +12,11 @@ TEST(RingLeaderListInfoTest,EmptyList){
     EXPECT_EQ(test.listInfo(),expectedResult);
 }
 
-TEST(RingLeaderListInfoTest,OneMonkeyTyper){
+TEST(RingLeaderWholisticTest,OneMonkeyTyper){
 
 }
 
-TEST(RingLeaderListInfoTest,TwoMonkeysOneUnrun){
+TEST(RingLeaderWholisticTest,TwoMonkeysOneUnrun){
 
 }
 
