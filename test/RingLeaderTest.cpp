@@ -19,6 +19,15 @@ TEST(RingLeaderWholisticTest,EmptyList){
     RingLeader test(empty,std::move(idGenerator));
     std::vector<ListInfo> expectedResult;
     EXPECT_EQ(test.listInfo(),expectedResult);
+    EXPECT_FALSE(test.promptInfo(1));
+    EXPECT_FALSE(test.streamInfo(3));
+
+    vector<MonkeyTyperStatus> expected;
+    EXPECT_EQ(test.runNCharacters(100),expected);
+
+    EXPECT_EQ(test.listInfo(),expectedResult);
+    EXPECT_FALSE(test.promptInfo(1));
+    EXPECT_FALSE(test.streamInfo(3));
 }
 
 TEST(RingLeaderWholisticTest,OneMonkeyTyper){
