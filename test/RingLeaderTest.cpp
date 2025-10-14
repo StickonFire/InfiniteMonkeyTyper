@@ -1,4 +1,5 @@
 #include "RingLeader.hpp"
+#include "MonkeyTyper.hpp"
 #include "mockClasses.hpp"
 
 #include <memory>
