@@ -59,6 +59,10 @@ char mt19937LetterSelector::selectCharacter(){
     return alphabet[draw % alphabet.size()];
 }
 
+unsigned int mt19937LetterSelector::getSeed(){
+    return this->seed;
+}
+
 PositionHolder::PositionHolder(std::string query): currentSpot(), currentHighestSpot(0), promptRecord(0), query(query), complete(false) { }
 
 PositionHolder::PositionHolder(std::string query, queue<int> &currentSpot, int promptRecord): currentSpot(currentSpot), currentHighestSpot(0), promptRecord(promptRecord), query(query), complete(false) { }

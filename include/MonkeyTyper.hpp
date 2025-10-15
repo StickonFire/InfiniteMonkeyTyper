@@ -76,6 +76,7 @@ class LetterSelector {
     public:
         virtual ~LetterSelector() = default;
         virtual char selectCharacter() = 0;
+        virtual unsigned int getSeed() = 0;
 };
 
 /**
@@ -90,6 +91,7 @@ class mt19937LetterSelector : public LetterSelector {
 
         mt19937LetterSelector(std::string alphabet, unsigned int seed);
         char selectCharacter() override;
+        unsigned int getSeed() override;
 };
 
 /**

@@ -11,6 +11,7 @@ using namespace std;
 class MockLetterSelector : public LetterSelector {
     public:
         MOCK_METHOD(char, selectCharacter, (), (override));
+        MOCK_METHOD(unsigned int, getSeed, (), (override));
 };
 
 #endif
