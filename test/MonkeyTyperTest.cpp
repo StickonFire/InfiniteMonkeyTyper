@@ -159,7 +159,10 @@ void monkeyTyperEvalSelectionTestHelper(MonkeyTyper &test,int expectedStreamSize
 }
 
 TEST(MonkeyTyperPositionHolderIntegration,TestCorrectSelections){
-    MonkeyTyper test(0, nullptr, "ab");
+    unique_ptr<MockLetterSelector> onlySeed = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*onlySeed,getSeed())
+        .WillOnce(Return(0));
+    MonkeyTyper test(0, std::move(onlySeed), "ab");
     monkeyTyperEvalSelectionTestHelper(test,0,0,"",false, "Case Monkey Typer initialization");
 
     EXPECT_EQ(test.evaluateSelection('a'),1);
@@ -170,10 +173,14 @@ TEST(MonkeyTyperPositionHolderIntegration,TestCorrectSelections){
 }
 
 TEST(MonkeyTyperPositionHolderIntegration,IncorrectThenCorrect){
+    unique_ptr<MockLetterSelector> onlySeed = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*onlySeed,getSeed())
+        .WillOnce(Return(0));
+
     queue<int> testCurrSpot;
     testCurrSpot.push(1);
     PositionHolder hold("ab",testCurrSpot,1);
-    MonkeyTyper test(0,nullptr,hold,"ab",0);
+    MonkeyTyper test(0,std::move(onlySeed),hold,"ab",0);
     monkeyTyperEvalSelectionTestHelper(test,0,1,"",false, "Case Initialization with PositionHolder defined.");
 
     EXPECT_EQ(test.evaluateSelection('a'),1);
@@ -184,7 +191,10 @@ TEST(MonkeyTyperPositionHolderIntegration,IncorrectThenCorrect){
 }
 
 TEST(MonkeyTyperPositionHolderIntegration,SingleCharCorrect){
-    MonkeyTyper test(0,nullptr,"a");
+    unique_ptr<MockLetterSelector> onlySeed = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*onlySeed,getSeed())
+        .WillOnce(Return(0));
+    MonkeyTyper test(0,std::move(onlySeed),"a");
     monkeyTyperEvalSelectionTestHelper(test,0,0,"",false, "Case Initialization");
     
     EXPECT_EQ(test.evaluateSelection('a'),1);
@@ -222,6 +232,9 @@ TEST(MonkeyTyperStreamTest,SingleStream){
         .WillOnce(Return('x'))
         .WillOnce(Return('y'))
         .WillOnce(Return('z'));
+    EXPECT_CALL(*mockSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(0));
 
     MonkeyTyper test(0,std::move(mockSelector),query);
     
@@ -259,6 +272,9 @@ TEST(MonkeyTyperStreamTest,DoubleStream){
         .WillOnce(Return('s'))
         .WillOnce(Return('t'))
         .WillOnce(Return('u'));
+    EXPECT_CALL(*mockSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(0));
 
     MonkeyTyper test(0,std::move(mockSelector),query);
     
@@ -269,6 +285,9 @@ TEST(MonkeyTyperStreamTest,DoubleStream){
 TEST(MonkeyTyperStreamTest,KillStream){
     unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
     EXPECT_CALL(*mockSelector,selectCharacter()).Times(0);
+    EXPECT_CALL(*mockSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(0));
     queue<int> x;
     x.push(4);
     
@@ -299,7 +318,9 @@ TEST(MonkeyTyperStreamTest,PauseStream){
         .WillOnce(Return('x'))
         .WillOnce(Return('y'))
         .WillOnce(Return('z'));
-
+    EXPECT_CALL(*mockSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(0));
     MonkeyTyper test(0,std::move(mockSelector),query);
     
     test.pause();
@@ -316,6 +337,9 @@ TEST(MonkeyTyperStreamTest,CompleteSupercedingRest){
     EXPECT_CALL(*mockSelector,selectCharacter())
         .Times(1)
         .WillOnce(Return('a'));
+    EXPECT_CALL(*mockSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(0));
     std::string query = "a";
     int size = 0;
     MonkeyTyper test(0,std::move(mockSelector),query);
