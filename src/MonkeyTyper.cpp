@@ -48,7 +48,7 @@ StreamInfo::StreamInfo(): seed(0), stream(), listInfo() { }
 StreamInfo::StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo): seed(seed), stream(stream), listInfo(listInfo) { }
 
 
-mt19937LetterSelector::mt19937LetterSelector(string alphabet,int seed): alphabet(alphabet), rng(seed), seed(seed) {}
+mt19937LetterSelector::mt19937LetterSelector(string alphabet,unsigned int seed): alphabet(alphabet), rng(seed), seed(seed) {}
 
 char mt19937LetterSelector::selectCharacter(){
     int draw;

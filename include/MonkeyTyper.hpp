@@ -84,11 +84,11 @@ class LetterSelector {
 class mt19937LetterSelector : public LetterSelector {
     std::string alphabet;
     mt19937 rng;
+    unsigned int seed;
 
     public:
-        int seed;
 
-        mt19937LetterSelector(std::string alphabet, int seed);
+        mt19937LetterSelector(std::string alphabet, unsigned int seed);
         char selectCharacter() override;
 };
 
@@ -147,7 +147,7 @@ class MonkeyTyper {
     private:
         std::string query;
         unique_ptr<LetterSelector> rng;
-        int seed;
+        unsigned int seed;
         int id;
         int totalStreamSize;
         int packetSize;
