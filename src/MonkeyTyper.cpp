@@ -43,10 +43,21 @@ PromptInfo::PromptInfo(): seed(0), prompt(), listInfo() { }
 
 PromptInfo::PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo): seed(seed), prompt(prompt), listInfo(listInfo) { }
 
+bool PromptInfo::operator==(const PromptInfo &other) const {
+    return this->seed == other.seed
+        && this->prompt == other.prompt
+        && this->listInfo == other.listInfo;
+}
+
 StreamInfo::StreamInfo(): seed(0), stream(), listInfo() { }
 
 StreamInfo::StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo): seed(seed), stream(stream), listInfo(listInfo) { }
 
+bool StreamInfo::operator==(const StreamInfo &other) const {
+    return this->seed == other.seed
+        && this->stream == other.stream
+        && this->listInfo == other.listInfo;
+}
 
 mt19937LetterSelector::mt19937LetterSelector(string alphabet,unsigned int seed): alphabet(alphabet), rng(seed), seed(seed) {}
 

@@ -59,6 +59,7 @@ struct PromptInfo{
     unsigned int seed;
     ListInfo listInfo;
 
+    bool operator==(const PromptInfo &other) const;
     PromptInfo();
     PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo);
 };
@@ -68,6 +69,7 @@ struct StreamInfo{
     std::string stream;
     ListInfo listInfo;
 
+    bool operator==(const StreamInfo &other) const;
     StreamInfo();
     StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo);
 };
