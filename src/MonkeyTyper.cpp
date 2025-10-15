@@ -100,19 +100,19 @@ MonkeyTyper::MonkeyTyper(MonkeyTyper &&other): query(other.query), rng(std::move
     this->currentlyRunning.store(other.currentlyRunning);
 }
 
-MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, string query) : query(query), rng(std::move(rng)), seed(0), id(id), packetSize(8), currentSpot(query),
+MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, string query) : query(query), rng(std::move(rng)), seed(this->rng->getSeed()), id(id), packetSize(8), currentSpot(query),
         totalStreamSize(0), packetStream(), packetBestGuessLocation(), packetCorrespondingQuery(), packetCorrectness(){
     this->isPaused.store(false);
     this->currentlyRunning.store(true);
 }
 
-MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, string query, int packet_size) : query(query), rng(std::move(rng)), seed(0), id(id), packetSize(packet_size), currentSpot(query),
+MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, string query, int packet_size) : query(query), rng(std::move(rng)), seed(this->rng->getSeed()), id(id), packetSize(packet_size), currentSpot(query),
         totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
     this->currentlyRunning.store(true);
 }
 
-MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, PositionHolder &currentSpot, string query, int packet_size) : query(query), rng(std::move(rng)), seed(0), id(id), packetSize(packet_size), currentSpot(currentSpot),
+MonkeyTyper::MonkeyTyper(int id, unique_ptr<LetterSelector> rng, PositionHolder &currentSpot, string query, int packet_size) : query(query), rng(std::move(rng)), seed(this->rng->getSeed()), id(id), packetSize(packet_size), currentSpot(currentSpot),
         totalStreamSize(0),packetStream(),packetBestGuessLocation(),packetCorrespondingQuery(),packetCorrectness() {
     this->isPaused.store(false);
     this->currentlyRunning.store(true);
