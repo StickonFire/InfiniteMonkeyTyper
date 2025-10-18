@@ -8,6 +8,16 @@
 
 using ::testing::Return;
 
+template <class T>
+ostream& operator<<(ostream& os, vector<T> other){
+    os << "vector: {";
+    for(T element : other){
+        os << element << " ";
+    }
+    os << "}";
+    return os;
+}
+
 /**
  * Wholistic tests for the following functions:
  *  - Constructor
