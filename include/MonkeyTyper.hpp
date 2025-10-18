@@ -10,6 +10,7 @@
 #include <thread>
 #include <mutex>
 #include <memory>
+#include <ostream>
 using namespace std;
 
 extern std::string default_alphabet;
@@ -54,6 +55,8 @@ struct ListInfo{
             vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation);
 };
 
+ostream& operator<<(ostream &os, const ListInfo add);
+
 struct PromptInfo{
     std::string prompt;
     unsigned int seed;
@@ -64,6 +67,8 @@ struct PromptInfo{
     PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo);
 };
 
+ostream& operator<<(ostream &os, const PromptInfo add);
+
 struct StreamInfo{
     unsigned int seed;
     std::string stream;
@@ -73,6 +78,8 @@ struct StreamInfo{
     StreamInfo();
     StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo);
 };
+
+ostream& operator<<(ostream &os, const StreamInfo add); 
 
 class LetterSelector {
     public:

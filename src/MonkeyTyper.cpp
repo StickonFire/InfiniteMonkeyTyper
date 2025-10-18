@@ -8,7 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <memory>
-
+#include <ostream>
 
 std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -26,6 +26,30 @@ ListInfo::ListInfo(int id, int currentLocation,int guessStreamSize, int promptRe
     this->packetCorrectness = packetCorrectness;
     this->packetCorrespondingQuery = packetCorrespondingQuery;
     this->packetBestGuessLocation = packetBestGuessLocation;
+}
+
+ostream& operator<<(ostream &os, const ListInfo add){
+    os << "List Info:" << std::endl;
+    os << "id: " << add.id << std::endl;
+    os << "currentLocation: " << add.currentLocation << std::endl;
+    os << "guessStreamSize: " << add.guessStreamSize << std::endl;
+    os << "promptRecord: " << add.promptRecord << std::endl;
+    std::string packetStream             = "packetStream:             {";
+    std::string packetCorrectness        = "packetCorrectness:        {";
+    std::string packetCorrespondingQuery = "packetCorrespondingQuery: {";
+    std::string packetBestGuessLocation  = "packetBestGuessLocation:  {";
+    for(int i = 0; i < add.packetStream.size(); i++){
+        packetStream += add.packetStream[i];
+        packetCorrectness += std::to_string(add.packetCorrectness[i]);
+        packetCorrespondingQuery += add.packetCorrespondingQuery[i];
+        packetBestGuessLocation += std::to_string(add.packetBestGuessLocation[i]);
+    }
+    os << packetStream << "}" << std::endl;
+    os << packetCorrectness << "}" << std::endl;
+    os << packetCorrespondingQuery << "}" << std::endl;
+    os << packetBestGuessLocation << "}" << std::endl;
+    os << "}";
+    return os;
 }
 
 bool ListInfo::operator==(const ListInfo &other) const {
@@ -49,6 +73,14 @@ bool PromptInfo::operator==(const PromptInfo &other) const {
         && this->listInfo == other.listInfo;
 }
 
+ostream& operator<<(ostream& os, const PromptInfo other){
+    os << "PromptInfo {\n";
+    os << "Seed: " << other.seed << std::endl;
+    os << "Prompt: {" << other.prompt << "}" << std::endl;
+    os << "ListInfo: " << other.listInfo << std::endl << "}";
+    return os;
+}
+
 StreamInfo::StreamInfo(): seed(0), stream(), listInfo() { }
 
 StreamInfo::StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo): seed(seed), stream(stream), listInfo(listInfo) { }
@@ -57,6 +89,14 @@ bool StreamInfo::operator==(const StreamInfo &other) const {
     return this->seed == other.seed
         && this->stream == other.stream
         && this->listInfo == other.listInfo;
+}
+
+ostream& operator<<(ostream& os, const StreamInfo other){
+    os << "StreamInfo {" << std::endl;
+    os << "Seed: " << other.seed << std::endl;
+    os << "Stream: {" << other.stream << std::endl << "}\n";
+    os << "ListInfo: " << other.listInfo << std::endl << "}" << std::endl;
+    return os;
 }
 
 mt19937LetterSelector::mt19937LetterSelector(string alphabet,unsigned int seed): alphabet(alphabet), rng(seed), seed(seed) {}
