@@ -145,7 +145,7 @@ void PositionHolder::evaluateSelection(char selection){
     }
 }
 
-MonkeyTyper::MonkeyTyper(MonkeyTyper &&other): query(other.query), rng(std::move(other.rng)), seed(other.seed), id(other.id), packetSize(other.packetSize), currentSpot(other.query),
+MonkeyTyper::MonkeyTyper(MonkeyTyper &&other): query(other.query), rng(std::move(other.rng)), seed(other.seed), id(other.id), packetSize(other.packetSize), currentSpot(other.currentSpot), guessStream(other.guessStream),
         totalStreamSize(other.totalStreamSize), packetStream(other.packetStream), packetBestGuessLocation(other.packetBestGuessLocation), packetCorrespondingQuery(other.packetCorrespondingQuery), packetCorrectness(other.packetCorrectness){
     this->isPaused.store(other.isPaused);
     this->currentlyRunning.store(other.currentlyRunning);
