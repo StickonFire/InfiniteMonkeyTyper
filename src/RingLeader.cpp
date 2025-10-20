@@ -44,18 +44,30 @@ RingLeader::RingLeader(std::map<int,MonkeyTyper>& typers, unique_ptr<IdMaker> id
 }
 
 vector<MonkeyTyperStatus> RingLeader::runNCharacters(int n){
-    return vector<MonkeyTyperStatus>();
+    vector<MonkeyTyperStatus> result;
+    for(std::map<int,MonkeyTyper>::iterator itr = typers.begin(); itr != typers.end(); itr++){
+        result.push_back(MonkeyTyperStatus(itr->first,itr->second.moveStream(n)));
+    }
+    return result;
 }
 
 vector<ListInfo> RingLeader::listInfo(){
-    return vector<ListInfo>();
+    vector<ListInfo> result;
+    for(std::map<int,MonkeyTyper>::iterator itr = typers.begin(); itr != typers.end(); itr++){
+        result.push_back(itr->second.listInfo());
+    }
+    return result;
 }
 
 std::optional<StreamInfo> RingLeader::streamInfo(int id){
+    if(typers.find(id) != typers.end())
+        return typers.at(id).streamInfo();
     return { };
 }
 
 std::optional<PromptInfo> RingLeader::promptInfo(int id){
+    if(typers.find(id) != typers.end())
+        return typers.at(id).promptInfo();
     return { };
 }
 
