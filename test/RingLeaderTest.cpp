@@ -95,6 +95,93 @@ TEST(RingLeaderWholisticTest,OneMonkeyTyper){
 }
 
 TEST(RingLeaderWholisticTest,TwoMonkeysOneUnrun){
+    std::map<int,MonkeyTyper> two;
+    unique_ptr<MockLetterSelector> firstSelector = make_unique<MockLetterSelector>();
+    unique_ptr<MockLetterSelector> secondSelector = make_unique<MockLetterSelector>();
 
+    EXPECT_CALL(*firstSelector,selectCharacter())
+        .Times(2)
+        .WillOnce(Return('a'))
+        .WillOnce(Return('b'));
+    EXPECT_CALL(*firstSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(2));
+    EXPECT_CALL(*secondSelector,selectCharacter())
+        .Times(1)
+        .WillOnce(Return('c'));
+    EXPECT_CALL(*secondSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(2));
+
+    int firstId = 1;
+    int secondId = 2;
+    std::string firstQuery = "aa";
+    MonkeyTyper firstTyper(firstId,std::move(firstSelector),firstQuery);
+    firstTyper.moveStream(1);
+    std::string secondQuery = "c";
+    MonkeyTyper secondTyper(secondId,std::move(secondSelector),"c");
+
+    two.insert(std::make_pair(firstId,std::move(firstTyper)));
+    two.insert(std::make_pair(secondId,std::move(secondTyper)));
+
+    unique_ptr<CounterIdMaker> idMaker = make_unique<CounterIdMaker>(100,std::set<int>());
+
+    RingLeader test(two,std::move(idMaker));
+
+    vector<ListInfo> expectedList;
+    vector<char> firstPacketStream{'a'};
+    vector<LetterOutcome> firstOutcomeStream{Match};
+    vector<char> firstCorrespondingQuery{'a'};
+    vector<int> firstPacketBestGuessLocation{1};
+    ListInfo firstResult(1,1,1,1,firstPacketStream,firstOutcomeStream,firstCorrespondingQuery,firstPacketBestGuessLocation);
+    ListInfo secondResult;
+    secondResult.id = 2;
+
+    expectedList.push_back(firstResult);
+    expectedList.push_back(secondResult);
+
+    StreamInfo expectedFirstStreamInfo(2,"a",firstResult);
+    PromptInfo expectedFirstPromptInfo(2,firstQuery,firstResult);
+    StreamInfo expectedSecondStreamInfo(2,"",secondResult);
+    PromptInfo expectedSecondPromptInfo(2,secondQuery,secondResult);
+
+    EXPECT_EQ(test.listInfo(),expectedList);
+    EXPECT_EQ(test.streamInfo(1),expectedFirstStreamInfo);
+    EXPECT_EQ(test.promptInfo(1),expectedFirstPromptInfo);
+    EXPECT_EQ(test.streamInfo(2),expectedSecondStreamInfo);
+    EXPECT_EQ(test.promptInfo(2),expectedSecondPromptInfo);
+
+    std::vector<MonkeyTyperStatus> expectedStatus{MonkeyTyperStatus(1,PacketReady),MonkeyTyperStatus(2,Completed)};
+    EXPECT_EQ(test.runNCharacters(1),expectedStatus);
+
+    expectedList[0].currentLocation = 0;
+    expectedList[0].guessStreamSize = 2;
+    expectedList[0].promptRecord = 1;
+    expectedList[0].packetStream = vector<char>{'b'};
+    expectedList[0].packetBestGuessLocation = vector<int>{0};
+    expectedList[0].packetCorrectness = vector<LetterOutcome>{NoMatch};
+    expectedList[0].packetCorrespondingQuery = vector<char>{'a'};
+
+    expectedFirstStreamInfo.stream = "ab";
+    expectedFirstStreamInfo.listInfo = expectedList[0];
+    expectedFirstPromptInfo.listInfo = expectedList[0];
+
+    expectedList[1].currentLocation = 1;
+    expectedList[1].guessStreamSize = 1;
+    expectedList[1].promptRecord = 1;
+    expectedList[1].packetStream = vector<char>{'c'};
+    expectedList[1].packetCorrectness = vector<LetterOutcome>{Complete};
+    expectedList[1].packetCorrespondingQuery = vector<char>{'c'};
+    expectedList[1].packetBestGuessLocation = vector<int>{1};
+
+    expectedSecondStreamInfo.stream = "c";
+    expectedSecondStreamInfo.listInfo = expectedList[1];
+    expectedSecondPromptInfo.listInfo = expectedList[1];
+
+    EXPECT_EQ(test.listInfo(),expectedList);
+    EXPECT_EQ(test.streamInfo(1),expectedFirstStreamInfo);
+    EXPECT_EQ(test.promptInfo(1),expectedFirstPromptInfo);
+    EXPECT_EQ(test.streamInfo(2),expectedSecondStreamInfo);
+    EXPECT_EQ(test.promptInfo(2),expectedSecondPromptInfo);
 }
 
