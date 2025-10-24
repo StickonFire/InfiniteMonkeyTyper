@@ -88,6 +88,10 @@ TEST(RingLeaderWholisticTest,OneMonkeyTyper){
     EXPECT_EQ(test.listInfo(),expectedListInfo);
     EXPECT_EQ(*(test.streamInfo(1)),expectedStreamInfo);
     EXPECT_EQ(*(test.promptInfo(1)),expectedPromptInfo);
+
+    //Test for nonexistant ids
+    EXPECT_FALSE(test.streamInfo(2));
+    EXPECT_FALSE(test.promptInfo(2));
 }
 
 TEST(RingLeaderWholisticTest,TwoMonkeysOneUnrun){
