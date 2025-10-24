@@ -185,3 +185,11 @@ TEST(RingLeaderWholisticTest,TwoMonkeysOneUnrun){
     EXPECT_EQ(test.promptInfo(2),expectedSecondPromptInfo);
 }
 
+TEST(RingLeaderTest,PauseTests){
+    std::map<int,MonkeyTyper> two;
+    
+}
+
+TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
+
+}
