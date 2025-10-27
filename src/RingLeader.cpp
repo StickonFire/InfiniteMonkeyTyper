@@ -76,11 +76,13 @@ int RingLeader::createMonkeyTyper(std::string query, int seed){
 }
 
 void RingLeader::pauseMonkeyTyper(int id){
-
+    if(typers.find(id) != typers.end())
+        typers.at(id).pause();
 }
 
 void RingLeader::unpauseMonkeyTyper(int id){
-
+    if(typers.find(id) != typers.end())
+        typers.at(id).unpause();
 }
 
 void RingLeader::removeMonkeyTyper(int id){

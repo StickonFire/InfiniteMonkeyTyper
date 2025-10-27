@@ -188,6 +188,137 @@ TEST(RingLeaderWholisticTest,TwoMonkeysOneUnrun){
 TEST(RingLeaderTest,PauseTests){
     std::map<int,MonkeyTyper> two;
     
+    std::string query1 = "abc";
+    int id1 = 0;
+    unique_ptr<MockLetterSelector> selector1 = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*selector1,getSeed())
+        .Times(1)
+        .WillOnce(Return(id1));
+    EXPECT_CALL(*selector1,selectCharacter())
+        .Times(3)
+        .WillOnce(Return(query1[0]))
+        .WillOnce(Return(query1[1]))
+        .WillOnce(Return(query1[2]));
+    
+    std::string query2 = "cd";
+    int id2 = 1;
+    unique_ptr<MockLetterSelector> selector2 = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*selector2,getSeed())
+        .Times(1)
+        .WillOnce(Return(id2));
+    EXPECT_CALL(*selector2,selectCharacter())
+        .Times(3)
+        .WillOnce(Return('c'))
+        .WillOnce(Return('b'))
+        .WillOnce(Return('d'));
+    
+    MonkeyTyper first(id1,std::move(selector1),query1);
+    MonkeyTyper second(id2,std::move(selector2),query2);
+
+    two.insert(std::make_pair(id1,std::move(first)));
+    two.insert(std::make_pair(id2,std::move(second)));
+
+    RingLeader test(two,nullptr);
+
+    vector<char> stream1;
+    vector<LetterOutcome> outcome1;
+    vector<char> corresponding1;
+    vector<int> location1;
+    ListInfo expectedList1(id1,0,0,0,stream1,outcome1,corresponding1,location1);
+    StreamInfo expectedStream1(id1,"",expectedList1);
+    PromptInfo expectedPrompt1(id1,query1,expectedList1);
+
+    vector<char> stream2;
+    vector<LetterOutcome> outcome2;
+    vector<char> corresponding2;
+    vector<int> location2;
+    ListInfo expectedList2(id2,0,0,0,stream2,outcome2,corresponding2,location2);
+    StreamInfo expectedStream2(id2,"",expectedList2);
+    PromptInfo expectedPrompt2(id2,query2,expectedList2);
+
+    test.pauseMonkeyTyper(id1);
+    test.unpauseMonkeyTyper(id2);
+
+    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedList1,expectedList2}));
+    EXPECT_EQ(test.streamInfo(id1),expectedStream1);
+    EXPECT_EQ(test.promptInfo(id1),expectedPrompt1);
+    EXPECT_EQ(test.streamInfo(id2),expectedStream2);
+    EXPECT_EQ(test.promptInfo(id2),expectedPrompt2);
+
+
+    //First Run. First MT is paused, second unpaused
+    EXPECT_EQ(test.runNCharacters(1),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Paused),MonkeyTyperStatus(id2,PacketReady)}));
+
+    expectedList2.currentLocation = 1;
+    expectedList2.promptRecord = 1;
+    expectedList2.guessStreamSize = 1;
+    expectedList2.packetStream = vector<char>{'c'};
+    expectedList2.packetCorrectness = vector<LetterOutcome>{Match};
+    expectedList2.packetCorrespondingQuery = vector<char>{'c'};
+    expectedList2.packetBestGuessLocation = vector<int>{1};
+    expectedPrompt2.listInfo = expectedList2;
+    expectedStream2.listInfo = expectedList2;
+    expectedStream2.stream = "c";
+    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedList1,expectedList2}));
+    EXPECT_EQ(test.streamInfo(id1),expectedStream1);
+    EXPECT_EQ(test.promptInfo(id1),expectedPrompt1);
+    EXPECT_EQ(test.streamInfo(id2),expectedStream2);
+    EXPECT_EQ(test.promptInfo(id2),expectedPrompt2);
+
+    //second run. first MT unpaused, second paused.
+    test.unpauseMonkeyTyper(id1);
+    test.pauseMonkeyTyper(id2);
+
+    EXPECT_EQ(test.runNCharacters(1),(vector<MonkeyTyperStatus>{MonkeyTyperStatus{id1,PacketReady},MonkeyTyperStatus{id2,Paused}}));
+
+    expectedList1.currentLocation = 1;
+    expectedList1.guessStreamSize = 1;
+    expectedList1.promptRecord = 1;
+    expectedList1.packetStream = vector<char>{'a'};
+    expectedList1.packetCorrectness = vector<LetterOutcome>{Match};
+    expectedList1.packetCorrespondingQuery = vector<char>{'a'};
+    expectedList1.packetBestGuessLocation = vector<int>{1};
+    expectedPrompt1.listInfo = expectedList1;
+    expectedStream1.listInfo = expectedList1;
+    expectedStream1.stream = "a";
+    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedList1,expectedList2}));
+    EXPECT_EQ(test.streamInfo(id1),expectedStream1);
+    EXPECT_EQ(test.promptInfo(id1),expectedPrompt1);
+    EXPECT_EQ(test.streamInfo(id2),expectedStream2);
+    EXPECT_EQ(test.promptInfo(id2),expectedPrompt2);
+    //Third "run". both MTs paused.
+    test.pauseMonkeyTyper(id1);
+    test.pauseMonkeyTyper(id2);
+    
+    EXPECT_EQ(test.runNCharacters(999),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Paused),MonkeyTyperStatus(id2,Paused)}));
+    
+    //Fourth run. both MTS unpaused.
+    test.unpauseMonkeyTyper(id1);
+    test.unpauseMonkeyTyper(id2);
+
+    expectedList1.currentLocation = 3;
+    expectedList1.guessStreamSize = 3;
+    expectedList1.promptRecord = 3;
+    expectedList1.packetStream = vector<char>{'b','c'};
+    expectedList1.packetCorrectness = vector<LetterOutcome>{Match,Complete};
+    expectedList1.packetCorrespondingQuery = vector<char>{'b','c'};
+    expectedList1.packetBestGuessLocation = vector<int>{2,3};
+    expectedPrompt1.listInfo = expectedList1;
+    expectedStream1.listInfo = expectedList1;
+    expectedStream1.stream = "abc";
+
+    expectedList2.currentLocation = 0;
+    expectedList2.guessStreamSize = 3;
+    expectedList2.promptRecord = 1;
+    expectedList2.packetStream = vector<char>{'b','d'};
+    expectedList2.packetCorrectness = vector<LetterOutcome>{NoMatch,NoMatch};
+    expectedList2.packetCorrespondingQuery = vector<char>{'d','c'};
+    expectedList2.packetBestGuessLocation = vector<int>{1};
+    expectedPrompt2.listInfo = expectedList2;
+    expectedStream2.listInfo = expectedList2;
+    expectedStream2.stream = "cbd";
+
+    EXPECT_EQ(test.runNCharacters(2),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Completed),MonkeyTyperStatus(id2,PacketReady)}));
 }
 
 TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
