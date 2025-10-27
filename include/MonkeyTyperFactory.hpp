@@ -13,12 +13,12 @@ class MonkeyTyperFactory {
          * @param query the query value for the constructed MonkeyTyper
          * @returns an unrun MonkeyTyper that uses the provided values.
          */
-        virtual unique_ptr<MonkeyTyper> build(int id, unsigned int seed, std::string query) = 0;
+        virtual MonkeyTyper build(int id, unsigned int seed, std::string query) = 0;
 };
 
 class mt19937MonkeyTyperFactory: public MonkeyTyperFactory {
     public:
-        unique_ptr<MonkeyTyper> build(int id, unsigned int seed, std::string query) override;
+        MonkeyTyper build(int id, unsigned int seed, std::string query) override;
 };
 
 #endif
