@@ -43,6 +43,13 @@ RingLeader::RingLeader(std::map<int,MonkeyTyper>& typers, unique_ptr<IdMaker> id
     }
 }
 
+RingLeader::RingLeader(std::map<int,MonkeyTyper> &typers, unique_ptr<IdMaker> idMaker, unique_ptr<MonkeyTyperFactory> monkeyProducer):
+    typers(), idGenerator(std::move(idMaker)), monkeyProducer(std::move(monkeyProducer)) {
+    for(std::map<int,MonkeyTyper>::iterator itr = typers.begin(); itr != typers.end(); itr++){
+        this->typers.insert(std::make_pair(itr->first,std::move(itr->second)));
+    }
+}
+
 vector<MonkeyTyperStatus> RingLeader::runNCharacters(int n){
     vector<MonkeyTyperStatus> result;
     for(std::map<int,MonkeyTyper>::iterator itr = typers.begin(); itr != typers.end(); itr++){

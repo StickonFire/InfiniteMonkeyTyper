@@ -20,9 +20,11 @@ add_executable(
   MonkeyTyperTest
   src/MonkeyTyper.cpp
   src/RingLeader.cpp
+  src/MonkeyTyperFactory.cpp
   test/MonkeyTyperTest.cpp
   test/RingLeaderTest.cpp
   test/CounterIdMakerTest.cpp
+  test/MonkeyTyperFactoryTest.cpp
 )
 target_link_libraries(
   MonkeyTyperTest
