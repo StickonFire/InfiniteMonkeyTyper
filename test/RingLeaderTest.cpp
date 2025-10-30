@@ -313,12 +313,18 @@ TEST(RingLeaderTest,PauseTests){
     expectedList2.packetStream = vector<char>{'b','d'};
     expectedList2.packetCorrectness = vector<LetterOutcome>{NoMatch,NoMatch};
     expectedList2.packetCorrespondingQuery = vector<char>{'d','c'};
-    expectedList2.packetBestGuessLocation = vector<int>{1};
+    expectedList2.packetBestGuessLocation = vector<int>{0,0};
     expectedPrompt2.listInfo = expectedList2;
     expectedStream2.listInfo = expectedList2;
     expectedStream2.stream = "cbd";
 
     EXPECT_EQ(test.runNCharacters(2),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Completed),MonkeyTyperStatus(id2,PacketReady)}));
+    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedList1,expectedList2}));
+    EXPECT_EQ(test.promptInfo(id1),expectedPrompt1);
+    EXPECT_EQ(test.streamInfo(id1),expectedStream1);
+    EXPECT_EQ(test.promptInfo(id2),expectedPrompt2);
+    EXPECT_EQ(test.streamInfo(id2),expectedStream2);
+
 }
 
 TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
