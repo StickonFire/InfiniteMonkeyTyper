@@ -83,7 +83,7 @@ class RingLeader {
          * Generates a monkeyTyper using the query and the seed. It additionally assigns an id to the MonkeyTyper.
          * @return id of the generated MonkeyTyper
          */
-        int createMonkeyTyper(std::string query, int seed);
+        int createMonkeyTyper(std::string query, unsigned int seed);
         void pauseMonkeyTyper(int id);
         void unpauseMonkeyTyper(int id);
         /**

@@ -78,8 +78,8 @@ std::optional<PromptInfo> RingLeader::promptInfo(int id){
     return { };
 }
 
-int RingLeader::createMonkeyTyper(std::string query, int seed){
     return 0;
+int RingLeader::createMonkeyTyper(std::string query, unsigned int seed){
 }
 
 void RingLeader::pauseMonkeyTyper(int id){
