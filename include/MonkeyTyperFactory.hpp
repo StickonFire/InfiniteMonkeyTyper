@@ -6,6 +6,7 @@
 
 class MonkeyTyperFactory {
     public:
+        virtual ~MonkeyTyperFactory() = default;
         /**
          * Returns a constructed MonkeyTyper using the provided values.
          * @param id the id value for the constructed MonkeyTyper
