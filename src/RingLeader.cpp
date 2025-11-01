@@ -78,8 +78,11 @@ std::optional<PromptInfo> RingLeader::promptInfo(int id){
     return { };
 }
 
-    return 0;
 int RingLeader::createMonkeyTyper(std::string query, unsigned int seed){
+    int id = idGenerator->generateId();
+    MonkeyTyper toInsert = monkeyProducer->build(id,seed,query);
+    this->typers.insert(std::make_pair(id,std::move(toInsert)));
+    return id;
 }
 
 void RingLeader::pauseMonkeyTyper(int id){
@@ -93,5 +96,8 @@ void RingLeader::unpauseMonkeyTyper(int id){
 }
 
 void RingLeader::removeMonkeyTyper(int id){
-
+    if(typers.find(id) != typers.end()){
+        typers.erase(typers.find(id));
+        idGenerator->releaseId(id);
+    }
 }
