@@ -7,12 +7,19 @@
 
 #include "MonkeyTyper.hpp"
 #include "MonkeyTyperFactory.hpp"
+#include "RingLeader.hpp"
 using namespace std;
 
 class MockLetterSelector : public LetterSelector {
     public:
         MOCK_METHOD(char, selectCharacter, (), (override));
         MOCK_METHOD(unsigned int, getSeed, (), (override));
+};
+
+class MockIdMaker : public IdMaker {
+    public:
+        MOCK_METHOD(int, generateId, (), (override));
+        MOCK_METHOD(void, releaseId, (int id), (override));
 };
 
 
