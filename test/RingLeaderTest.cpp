@@ -7,6 +7,8 @@
 #include <gmock/gmock.h>
 
 using ::testing::Return;
+using ::testing::Mock;
+using ::testing::_;
 
 template <class T>
 ostream& operator<<(ostream& os, vector<T> other){
@@ -328,5 +330,52 @@ TEST(RingLeaderTest,PauseTests){
 }
 
 TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
+    int id1 = 10;
+    int id2 = 20;
+    int seed1 = 10;
+    int seed2 = 20;
+    std::string query1 = "ab";
+    std::string query2 = "abcde";
+    unique_ptr<MockLetterSelector> selector1 = make_unique<MockLetterSelector>();
+    unique_ptr<MockLetterSelector> selector2 = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*selector1,getSeed())
+        .Times(1)
+        .WillOnce(Return(seed1));
+    EXPECT_CALL(*selector1,selectCharacter())
+        .Times(2)
+        .WillOnce(Return('a'))
+        .WillOnce(Return('b'));
 
+    EXPECT_CALL(*selector2,getSeed())
+        .Times(1)
+        .WillOnce(Return(seed2));
+    EXPECT_CALL(*selector2,selectCharacter())
+        .Times(3)
+        .WillOnce(Return('a'))
+        .WillOnce(Return('a'))
+        .WillOnce(Return('b'));
+    
+    unique_ptr<MockMonkeyTyperFactory> mockFactory = make_unique<MockMonkeyTyperFactory>();
+    EXPECT_CALL(*mockFactory,build(id1,seed1,query1))
+        .WillOnce(Return(MonkeyTyper(id1,std::move(selector1),query1)));
+    EXPECT_CALL(*mockFactory,build(id2,seed2,query2))
+        .WillOnce(Return(MonkeyTyper(id2,std::move(selector2),query2)));
+
+    unique_ptr<MockIdMaker> mockId = make_unique<MockIdMaker>();
+    EXPECT_CALL(*mockId,generateId())
+        .Times(2)
+        .WillOnce(Return(id1))
+        .WillOnce(Return(id2));
+    
+    EXPECT_CALL(*mockId,releaseId(_))
+        .Times(2);
+
+    std::map<int,MonkeyTyper> empty;
+    RingLeader test(empty,std::move(mockId),std::move(mockFactory));
+
+    test.createMonkeyTyper(query1,seed1);
+    test.createMonkeyTyper(query2,seed2);
+    test.removeMonkeyTyper(id1);
+    test.removeMonkeyTyper(id2);
+    test.removeMonkeyTyper(0);
 }
