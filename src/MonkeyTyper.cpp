@@ -243,7 +243,13 @@ bool MonkeyTyper::complete(){
 }
 
 ListInfo MonkeyTyper::listInfo(){
-    int currentLocation = packetBestGuessLocation.size() > 0 ? packetBestGuessLocation.back() : 0;
+    int currentLocation = 0;
+    if(packetBestGuessLocation.size() > 0){
+        if(complete())
+            currentLocation = query.size();
+        else
+            currentLocation = packetBestGuessLocation.back();
+    } 
     return ListInfo(id, currentLocation, totalStreamSize, getPromptRecord(), 
             packetStream, packetCorrectness, packetCorrespondingQuery, packetBestGuessLocation);
 }
