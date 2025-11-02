@@ -156,25 +156,20 @@ TEST(RingLeaderWholisticTest,TwoMonkeysOneUnrun){
     std::vector<MonkeyTyperStatus> expectedStatus{MonkeyTyperStatus(1,PacketReady),MonkeyTyperStatus(2,Completed)};
     EXPECT_EQ(test.runNCharacters(1),expectedStatus);
 
-    expectedList[0].currentLocation = 0;
-    expectedList[0].guessStreamSize = 2;
-    expectedList[0].promptRecord = 1;
-    expectedList[0].packetStream = vector<char>{'b'};
-    expectedList[0].packetBestGuessLocation = vector<int>{0};
-    expectedList[0].packetCorrectness = vector<LetterOutcome>{NoMatch};
-    expectedList[0].packetCorrespondingQuery = vector<char>{'a'};
-
+    firstPacketStream = vector<char>{'b'};
+    firstPacketBestGuessLocation = vector<int>{0};
+    firstOutcomeStream = vector<LetterOutcome>{NoMatch};
+    firstCorrespondingQuery = vector<char>{'a'};
+    expectedList[0] = ListInfo(firstId,0,2,1,firstPacketStream,firstOutcomeStream,firstCorrespondingQuery,firstPacketBestGuessLocation);
     expectedFirstStreamInfo.stream = "ab";
     expectedFirstStreamInfo.listInfo = expectedList[0];
     expectedFirstPromptInfo.listInfo = expectedList[0];
 
-    expectedList[1].currentLocation = 1;
-    expectedList[1].guessStreamSize = 1;
-    expectedList[1].promptRecord = 1;
-    expectedList[1].packetStream = vector<char>{'c'};
-    expectedList[1].packetCorrectness = vector<LetterOutcome>{Complete};
-    expectedList[1].packetCorrespondingQuery = vector<char>{'c'};
-    expectedList[1].packetBestGuessLocation = vector<int>{1};
+    vector<char> secondPacketStream = vector<char>{'c'};
+    vector<LetterOutcome> secondOutcomeStream = vector<LetterOutcome>{Complete};
+    vector<char> secondCorrespondingQuery = vector<char>{'c'};
+    vector<int> secondPacketBestGuessLocation = vector<int>{1};
+    expectedList[1] = ListInfo(secondId,1,1,1,secondPacketStream,secondOutcomeStream,secondCorrespondingQuery,secondPacketBestGuessLocation);
 
     expectedSecondStreamInfo.stream = "c";
     expectedSecondStreamInfo.listInfo = expectedList[1];
@@ -251,13 +246,11 @@ TEST(RingLeaderTest,PauseTests){
     //First Run. First MT is paused, second unpaused
     EXPECT_EQ(test.runNCharacters(1),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Paused),MonkeyTyperStatus(id2,PacketReady)}));
 
-    expectedList2.currentLocation = 1;
-    expectedList2.promptRecord = 1;
-    expectedList2.guessStreamSize = 1;
-    expectedList2.packetStream = vector<char>{'c'};
-    expectedList2.packetCorrectness = vector<LetterOutcome>{Match};
-    expectedList2.packetCorrespondingQuery = vector<char>{'c'};
-    expectedList2.packetBestGuessLocation = vector<int>{1};
+    stream2 = vector<char>{'c'};
+    outcome2 = vector<LetterOutcome>{Match};
+    corresponding2 = vector<char>{'c'};
+    location2 = vector<int>{1};
+    expectedList2 = ListInfo(id2,1,1,1,stream2,outcome2,corresponding2,location2);
     expectedPrompt2.listInfo = expectedList2;
     expectedStream2.listInfo = expectedList2;
     expectedStream2.stream = "c";
@@ -273,13 +266,11 @@ TEST(RingLeaderTest,PauseTests){
 
     EXPECT_EQ(test.runNCharacters(1),(vector<MonkeyTyperStatus>{MonkeyTyperStatus{id1,PacketReady},MonkeyTyperStatus{id2,Paused}}));
 
-    expectedList1.currentLocation = 1;
-    expectedList1.guessStreamSize = 1;
-    expectedList1.promptRecord = 1;
-    expectedList1.packetStream = vector<char>{'a'};
-    expectedList1.packetCorrectness = vector<LetterOutcome>{Match};
-    expectedList1.packetCorrespondingQuery = vector<char>{'a'};
-    expectedList1.packetBestGuessLocation = vector<int>{1};
+    stream1 = vector<char>{'a'};
+    outcome1 = vector<LetterOutcome>{Match};
+    corresponding1 = vector<char>{'a'};
+    location1 = vector<int>{1};
+    expectedList1 = ListInfo(id1,1,1,1,stream1,outcome1,corresponding1,location1);
     expectedPrompt1.listInfo = expectedList1;
     expectedStream1.listInfo = expectedList1;
     expectedStream1.stream = "a";
@@ -298,13 +289,11 @@ TEST(RingLeaderTest,PauseTests){
     test.unpauseMonkeyTyper(id1);
     test.unpauseMonkeyTyper(id2);
 
-    expectedList1.currentLocation = 3;
-    expectedList1.guessStreamSize = 3;
-    expectedList1.promptRecord = 3;
-    expectedList1.packetStream = vector<char>{'b','c'};
-    expectedList1.packetCorrectness = vector<LetterOutcome>{Match,Complete};
-    expectedList1.packetCorrespondingQuery = vector<char>{'b','c'};
-    expectedList1.packetBestGuessLocation = vector<int>{2,3};
+    stream1 = vector<char>{'b','c'};
+    outcome1 = vector<LetterOutcome>{Match,Complete};
+    corresponding1 = vector<char>{'b','c'};
+    location1 = vector<int>{2,3};
+    expectedList1 = ListInfo(id1,3,3,3,stream1,outcome1,corresponding1,location1);
     expectedPrompt1.listInfo = expectedList1;
     expectedStream1.listInfo = expectedList1;
     expectedStream1.stream = "abc";
@@ -312,10 +301,11 @@ TEST(RingLeaderTest,PauseTests){
     expectedList2.currentLocation = 0;
     expectedList2.guessStreamSize = 3;
     expectedList2.promptRecord = 1;
-    expectedList2.packetStream = vector<char>{'b','d'};
-    expectedList2.packetCorrectness = vector<LetterOutcome>{NoMatch,NoMatch};
-    expectedList2.packetCorrespondingQuery = vector<char>{'d','c'};
-    expectedList2.packetBestGuessLocation = vector<int>{0,0};
+    stream2 = vector<char>{'b','d'};
+    outcome2 = vector<LetterOutcome>{NoMatch,NoMatch};
+    corresponding2 = vector<char>{'d','c'};
+    location2 = vector<int>{0,0};
+    expectedList2 = ListInfo(id2,0,3,1,stream2,outcome2,corresponding2,location2);
     expectedPrompt2.listInfo = expectedList2;
     expectedStream2.listInfo = expectedList2;
     expectedStream2.stream = "cbd";
@@ -395,13 +385,12 @@ TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
     test.createMonkeyTyper(query1,seed1);
     EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedListInfo1}));
     EXPECT_EQ(test.runNCharacters(1),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,PacketReady)}));
-    expectedListInfo1.currentLocation = 1;
-    expectedListInfo1.guessStreamSize = 1;
-    expectedListInfo1.promptRecord = 1;
-    expectedListInfo1.packetStream = vector<char>{'a'};
-    expectedListInfo1.packetCorrectness = vector<LetterOutcome>{Match};
-    expectedListInfo1.packetCorrespondingQuery = vector<char>{'a'};
-    expectedListInfo1.packetBestGuessLocation = vector<int>{1};
+
+    expectedStream1 = vector<char>{'a'};
+    expectedOutcome1 = vector<LetterOutcome>{Match};
+    expectedQuery1 = vector<char>{'a'};
+    expectedLocation1 = vector<int>{1};
+    expectedListInfo1 = ListInfo(id1,1,1,1,expectedStream1,expectedOutcome1,expectedQuery1,expectedLocation1);
     expectedPromptInfo1.listInfo = expectedListInfo1;
     expectedStreamInfo1.listInfo = expectedListInfo1;
     expectedStreamInfo1.stream = "a";
@@ -413,26 +402,23 @@ TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
     EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedListInfo1,expectedListInfo2}));
     EXPECT_EQ(test.runNCharacters(2),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Completed),MonkeyTyperStatus(id2,PacketReady)}));
 
-    expectedListInfo1.currentLocation = 2;
-    expectedListInfo1.guessStreamSize = 2;
-    expectedListInfo1.promptRecord = 2;
-    expectedListInfo1.packetStream = vector<char>{'b','a'};
-    expectedListInfo1.packetCorrectness = vector<LetterOutcome>{Complete,Untracked};
-    expectedListInfo1.packetCorrespondingQuery = vector<char>{'b','a'};
-    expectedListInfo1.packetBestGuessLocation = vector<int>{2,0};
+    expectedStream1 = vector<char>{'b','a'};
+    expectedOutcome1 = vector<LetterOutcome>{Complete,Untracked};
+    expectedQuery1 = vector<char>{'b','a'};
+    expectedLocation1 = vector<int>{2,0};
+    expectedListInfo1 = ListInfo(id1,2,2,2,expectedStream1,expectedOutcome1,expectedQuery1,expectedLocation1);
     expectedPromptInfo1.listInfo = expectedListInfo1;
     expectedStreamInfo1.listInfo = expectedListInfo1;
     expectedStreamInfo1.stream = "ab";
-    expectedListInfo2.currentLocation = 1;
-    expectedListInfo2.guessStreamSize = 2;
-    expectedListInfo2.promptRecord = 1;
-    expectedListInfo2.packetStream = vector<char>{'a','a'};
-    expectedListInfo2.packetCorrectness = vector<LetterOutcome>{Match,Fallback};
-    expectedListInfo2.packetCorrespondingQuery = vector<char>{'a','a'};
-    expectedListInfo2.packetBestGuessLocation = vector<int>{1,1};
+    expectedStream2 = vector<char>{'a','a'};
+    expectedOutcome2 = vector<LetterOutcome>{Match,Fallback};
+    expectedQuery2 = vector<char>{'a','a'};
+    expectedLocation2 = vector<int>{1,1};
+    expectedListInfo2 = ListInfo(id2,1,2,1,expectedStream2,expectedOutcome2,expectedQuery2,expectedLocation2);
     expectedPromptInfo2.listInfo = expectedListInfo2;
     expectedStreamInfo2.listInfo = expectedListInfo2;
     expectedStreamInfo2.stream = "aa";
+
     EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedListInfo1,expectedListInfo2}));
     EXPECT_EQ(test.promptInfo(id1),expectedPromptInfo1);
     EXPECT_EQ(test.streamInfo(id1),expectedStreamInfo1);
@@ -444,13 +430,12 @@ TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
     EXPECT_FALSE(test.streamInfo(id1));
 
     EXPECT_EQ(test.runNCharacters(1),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id2,PacketReady)}));
-    expectedListInfo2.currentLocation = 2;
-    expectedListInfo2.guessStreamSize = 3;
-    expectedListInfo2.promptRecord = 2;
-    expectedListInfo2.packetStream = vector<char>{'b'};
-    expectedListInfo2.packetCorrectness = vector<LetterOutcome>{Match};
-    expectedListInfo2.packetCorrespondingQuery = vector<char>{'b'};
-    expectedListInfo2.packetBestGuessLocation = vector<int>{2};
+
+    expectedStream2 = vector<char>{'b'};
+    expectedOutcome2 = vector<LetterOutcome>{Match};
+    expectedQuery2 = vector<char>{'b'};
+    expectedLocation2 = vector<int>{2};
+    expectedListInfo2 = ListInfo(id2,2,3,2,expectedStream2,expectedOutcome2,expectedQuery2,expectedLocation2);
     expectedPromptInfo2.listInfo = expectedListInfo2;
     expectedStreamInfo2.listInfo = expectedListInfo2;
     expectedStreamInfo2.stream = "aab";
