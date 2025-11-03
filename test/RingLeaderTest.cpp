@@ -452,3 +452,49 @@ TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
     EXPECT_FALSE(test.streamInfo(id2));
     EXPECT_EQ(test.runNCharacters(999),vector<MonkeyTyperStatus>());
 }
+
+/**
+ * This test uses the current classes with no mock values. 
+ */
+TEST(RingLeaderTest,NoMocks){
+    unsigned int seed = 200;
+    int startCounter = 399;
+    int querySize = 94;
+    mt19937LetterSelector control(default_alphabet,seed);
+    std::string query = "";
+    for(int i = 0; i < querySize; i++){
+        query.push_back(control.selectCharacter());
+    }
+    
+    unique_ptr<CounterIdMaker> counter = make_unique<CounterIdMaker>(startCounter,std::set<int>());
+    unique_ptr<mt19937MonkeyTyperFactory> factory = make_unique<mt19937MonkeyTyperFactory>();
+    std::map<int,MonkeyTyper> typers;
+    RingLeader test(typers,std::move(counter),std::move(factory));
+
+    test.createMonkeyTyper(query,seed);
+    vector<char> expectedStream;
+    vector<LetterOutcome> expectedOutcome;
+    vector<char> expectedCorresponding;
+    vector<int> expectedLocation;
+    ListInfo expectedListInfo(startCounter,0,0,0,expectedStream,expectedOutcome,expectedCorresponding,expectedLocation);
+    StreamInfo expectedStreamInfo(seed,std::string(""),expectedListInfo);
+    PromptInfo expectedPromptInfo(seed,query,expectedListInfo);
+    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedListInfo}));
+    EXPECT_EQ(test.promptInfo(startCounter),expectedPromptInfo);
+    EXPECT_EQ(test.streamInfo(startCounter),expectedStreamInfo);
+    EXPECT_EQ(test.runNCharacters(querySize),(std::vector<MonkeyTyperStatus>{MonkeyTyperStatus(startCounter,Completed)}));
+    for(int i = 0; i < querySize; i++){
+        expectedStream.push_back(query[i]);
+        expectedCorresponding.push_back(query[i]);
+        expectedLocation.push_back(i+1);
+    }
+    expectedOutcome = vector<LetterOutcome>(querySize-1,Match);
+    expectedOutcome.push_back(Complete);
+    expectedListInfo = ListInfo(startCounter,querySize,querySize,querySize,expectedStream,expectedOutcome,expectedCorresponding,expectedLocation);
+    expectedStreamInfo.listInfo = expectedListInfo;
+    expectedStreamInfo.stream = query;
+    expectedPromptInfo.listInfo = expectedListInfo;
+    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedListInfo}));
+    EXPECT_EQ(test.promptInfo(startCounter),expectedPromptInfo);
+    EXPECT_EQ(test.streamInfo(startCounter),expectedStreamInfo);
+}
