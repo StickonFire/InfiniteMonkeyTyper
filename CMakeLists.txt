@@ -18,6 +18,7 @@ enable_testing()
 
 add_executable(
   MonkeyTyperTest
+  src/ModelInfo.cpp
   src/MonkeyTyper.cpp
   src/RingLeader.cpp
   src/MonkeyTyperFactory.cpp

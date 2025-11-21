@@ -12,57 +12,6 @@
 
 std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-ListInfo::ListInfo(): id(0), currentLocation(0), guessStreamSize(0), promptRecord(0), packetStream(), 
-    packetCorrectness(), packetCorrespondingQuery(), packetBestGuessLocation() { }
-  
-ListInfo::ListInfo(int id, int currentLocation,int guessStreamSize, int promptRecord, vector<char> &packetStream, 
-    vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation){
-    
-    this->id = id;
-    this->currentLocation = currentLocation;
-    this->guessStreamSize = guessStreamSize;
-    this->promptRecord = promptRecord;
-    this->packetStream = packetStream;
-    this->packetCorrectness = packetCorrectness;
-    this->packetCorrespondingQuery = packetCorrespondingQuery;
-    this->packetBestGuessLocation = packetBestGuessLocation;
-}
-
-ostream& operator<<(ostream &os, const ListInfo add){
-    os << "List Info:" << std::endl;
-    os << "id: " << add.id << std::endl;
-    os << "currentLocation: " << add.currentLocation << std::endl;
-    os << "guessStreamSize: " << add.guessStreamSize << std::endl;
-    os << "promptRecord: " << add.promptRecord << std::endl;
-    std::string packetStream             = "packetStream:             {";
-    std::string packetCorrectness        = "packetCorrectness:        {";
-    std::string packetCorrespondingQuery = "packetCorrespondingQuery: {";
-    std::string packetBestGuessLocation  = "packetBestGuessLocation:  {";
-    for(int i = 0; i < add.packetStream.size(); i++){
-        packetStream += add.packetStream[i];
-        packetCorrectness += std::to_string(add.packetCorrectness[i]);
-        packetCorrespondingQuery += add.packetCorrespondingQuery[i];
-        packetBestGuessLocation += std::to_string(add.packetBestGuessLocation[i]);
-    }
-    os << packetStream << "}" << std::endl;
-    os << packetCorrectness << "}" << std::endl;
-    os << packetCorrespondingQuery << "}" << std::endl;
-    os << packetBestGuessLocation << "}" << std::endl;
-    os << "}";
-    return os;
-}
-
-bool ListInfo::operator==(const ListInfo &other) const {
-    return this->id == other.id
-        && this->currentLocation == other.currentLocation
-        && this->guessStreamSize == other.guessStreamSize
-        && this->promptRecord == other.promptRecord
-        && this->packetStream == other.packetStream
-        && this->packetCorrectness == other.packetCorrectness
-        && this->packetCorrespondingQuery == other.packetCorrespondingQuery
-        && this->packetBestGuessLocation == other.packetBestGuessLocation;
-}
-
 PromptInfo::PromptInfo(): seed(0), prompt(), listInfo() { }
 
 PromptInfo::PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo): seed(seed), prompt(prompt), listInfo(listInfo) { }
