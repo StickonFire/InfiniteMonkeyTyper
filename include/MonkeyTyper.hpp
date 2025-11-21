@@ -1,6 +1,8 @@
 #ifndef MONKEY_TYPER
 #define MONKEY_TYPER
 
+#include "ModelInfo.hpp"
+
 #include <string>
 #include <vector>
 #include <queue>
@@ -29,33 +31,6 @@ enum Status {
     Completed,
     PacketReady
 };
-
-enum LetterOutcome {
-    Match,
-    Complete,
-    Fallback,
-    NoMatch,
-    Untracked
-};
-
-struct ListInfo{
-    int id;
-    int currentLocation;
-    int guessStreamSize;
-    int promptRecord;
-    vector<char> packetStream;
-    vector<LetterOutcome> packetCorrectness;
-    vector<char> packetCorrespondingQuery;
-    vector<int> packetBestGuessLocation;
-
-    public:
-        bool operator==(const ListInfo &other) const;
-        ListInfo();
-        ListInfo(int id, int currentLocation,int guessStreamSize, int promptRecord, vector<char> &packetStream, 
-            vector<LetterOutcome> &packetCorrectness, vector<char> &packetCorrespondingQuery, vector<int> &packetBestGuessLocation);
-};
-
-ostream& operator<<(ostream &os, const ListInfo add);
 
 struct PromptInfo{
     std::string prompt;
