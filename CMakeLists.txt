@@ -26,6 +26,7 @@ add_executable(
   test/RingLeaderTest.cpp
   test/CounterIdMakerTest.cpp
   test/MonkeyTyperFactoryTest.cpp
+  test/InfoStructTest.cpp
 )
 target_link_libraries(
   MonkeyTyperTest
