@@ -54,3 +54,47 @@ bool ListInfo::operator==(const ListInfo &other) const {
         && this->packetCorrespondingQuery == other.packetCorrespondingQuery
         && this->packetBestGuessLocation == other.packetBestGuessLocation;
 }
+
+TyperInfo::TyperInfo(ListInfo& listInfo, std::string stream, std::string prompt, unsigned int seed){
+    this->listInfo = listInfo;
+    this->stream = stream;
+    this->prompt = prompt;
+    this->seed = seed;
+}
+
+bool TyperInfo::operator==(const TyperInfo &other) const{
+    return this->listInfo == other.listInfo
+        && this->stream == other.stream
+        && this->prompt == other.prompt
+        && this->seed == other.seed;
+}
+
+std::ostream& operator<<(std::ostream &os, const TyperInfo add){
+    os << "TyperInfo: " << std::endl;
+    os << add.listInfo << std::endl;
+    os << "seed: " << add.seed << std::endl;
+    os << "Prompt: {" << add.prompt << "}" << std::endl;
+    os << "Stream: {" << add.stream << "}" << std::endl;
+}
+
+ModelInfo::ModelInfo(std::map<int,std::string> &messages,std::map<int,TyperInfo> &typerValues){
+    this->messages = messages;
+    this->typerValues = typerValues;
+}
+
+bool ModelInfo::operator==(const ModelInfo &other) const{
+    return this->messages == other.messages
+        && this->typerValues == other.typerValues;
+}
+
+std::ostream& operator<<(std::ostream &os, const ModelInfo add){
+    os << "ModelInfo: " << std::endl;
+    for(std::map<int,TyperInfo>::const_iterator itr = add.typerValues.begin(); itr != add.typerValues.end(); itr++){
+        os << "Typer id: " << (*itr).first << std::endl;
+        os << (*itr).second << std::endl;
+    }
+    for(std::map<int,std::string>::const_iterator itr = add.messages.begin(); itr != add.messages.end(); itr++){
+        os << "Typer id: " << (*itr).first << std::endl;
+        os << "Message: " << (*itr).second << std::endl;
+    }
+}

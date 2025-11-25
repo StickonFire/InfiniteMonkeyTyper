@@ -39,14 +39,20 @@ struct TyperInfo{
     std::string prompt;
     unsigned int seed;
 
+    bool operator==(const TyperInfo &other) const;
     TyperInfo(ListInfo& listInfo, std::string stream, std::string prompt, unsigned int seed);
 };
+
+std::ostream& operator<<(std::ostream &os, const TyperInfo add);
 
 struct ModelInfo{
     std::map<int,std::string> messages;
     std::map<int,TyperInfo> typerValues;
 
+    bool operator==(const ModelInfo &other) const;
     ModelInfo(std::map<int,std::string> &messages,std::map<int,TyperInfo> &typerValues);
 };
+
+std::ostream& operator<<(std::ostream &os, const ModelInfo add);
 
 #endif
