@@ -113,3 +113,34 @@ TEST_F(TyperInfoEqualityTestSuite,CycleThroughIncorrect){
     second.seed = replacementSeed;
     EXPECT_EQ(first,second) << "TyperInfo seeds are equal, but declared unequal";
 }
+
+class ModelInfoTestSuite: public testing::Test {
+    protected:
+        ModelInfoTestSuite(): emptyMessages(), emptyTypers(), first(emptyMessages,emptyTypers), 
+                                second(emptyMessages,emptyTypers){ }
+        std::map<int,std::string> emptyMessages;
+        std::map<int,TyperInfo> emptyTypers;
+        ModelInfo first;
+        ModelInfo second;
+};
+
+TEST_F(ModelInfoTestSuite,Correct){
+    EXPECT_EQ(first,second) << "These ModelInfos are equal, but are labelled unequal";
+}
+
+TEST_F(ModelInfoTestSuite,CycleThroughIncorrect){
+    int messageId = 0;
+    std::string message = "First";
+    int typerId = 10;
+    ListInfo empty;
+    TyperInfo addedTyper(empty,"A","B",0);
+    first.messages[messageId] = message;
+    EXPECT_FALSE(first == second) << "ModelInfo equality operator failed to notice difference in message.";
+    second.messages[messageId] = message;
+    EXPECT_EQ(first,second) << "ModelInfo equality operator fails to notice the two are equal after equalizing messages";
+
+    first.typerValues.insert(std::make_pair(typerId,addedTyper));
+    EXPECT_FALSE(first == second) << "ModelInfo equality operator failed to notice difference in typerValues.";
+    second.typerValues.insert(std::make_pair(typerId,addedTyper));
+    EXPECT_EQ(first,second) << "ModelInfo equality operator fails to notice the two are equal after equalizing typerInfos";
+}
