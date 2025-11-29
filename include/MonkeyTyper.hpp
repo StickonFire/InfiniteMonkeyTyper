@@ -125,6 +125,7 @@ class MonkeyTyper {
         ListInfo listInfo();
         PromptInfo promptInfo();
         StreamInfo streamInfo();
+        TyperInfo typerInfo();
         bool complete();
         int getPromptRecord();
         int getTotalStreamSize();

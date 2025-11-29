@@ -203,6 +203,11 @@ ListInfo MonkeyTyper::listInfo(){
             packetStream, packetCorrectness, packetCorrespondingQuery, packetBestGuessLocation);
 }
 
+TyperInfo MonkeyTyper::typerInfo(){
+    ListInfo listInfo = this->listInfo();
+    return TyperInfo(listInfo,this->guessStream,this->query,this->seed);
+}
+
 PromptInfo MonkeyTyper::promptInfo(){
     return PromptInfo(seed, query, listInfo());
 }
