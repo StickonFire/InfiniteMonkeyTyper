@@ -75,6 +75,7 @@ std::ostream& operator<<(std::ostream &os, const TyperInfo add){
     os << "seed: " << add.seed << std::endl;
     os << "Prompt: {" << add.prompt << "}" << std::endl;
     os << "Stream: {" << add.stream << "}" << std::endl;
+    return os;
 }
 
 ModelInfo::ModelInfo(std::map<int,std::string> &messages,std::map<int,TyperInfo> &typerValues){
@@ -97,4 +98,5 @@ std::ostream& operator<<(std::ostream &os, const ModelInfo add){
         os << "Typer id: " << (*itr).first << std::endl;
         os << "Message: " << (*itr).second << std::endl;
     }
+    return os;
 }

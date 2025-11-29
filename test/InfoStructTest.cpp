@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 using ::testing::Return;
 using ::testing::Mock;
@@ -74,10 +75,19 @@ TEST(ListInfoEquality,CycleThroughIncorrect){
 class TyperInfoEqualityTestSuite : public testing::Test {
 
     protected:
-        TyperInfoEqualityTestSuite(): empty(), first(empty,"95","65",40), second(empty,"95","65",40){ }
         ListInfo empty;
         TyperInfo first;
         TyperInfo second;
+
+        void checkInfoInequality(std::string message){
+            EXPECT_FALSE(first == second) << message << "First: " << first << "\nSecond: " << second;
+        }
+
+        void checkInfoEquality(std::string message){
+            EXPECT_EQ(first,second) << message << "First: " << first << "\nSecond: " << second;
+        }
+
+        TyperInfoEqualityTestSuite(): empty(), first(empty,"95","65",40), second(empty,"95","65",40){ }
 };
 
 TEST_F(TyperInfoEqualityTestSuite,Correct){
@@ -91,41 +101,46 @@ TEST_F(TyperInfoEqualityTestSuite,CycleThroughIncorrect){
     std::vector<int> packetLocation{1};
     ListInfo different(10,10,10,10,packetStream,packetOutcome,packetCorresponding,packetLocation);
     first.listInfo = ListInfo(different);
-    EXPECT_FALSE(first == second) << "TyperInfo ListInfo different but incorrectly marked equal";
+    checkInfoInequality("TyperInfo's ListInfo are unequal, but found to be equal.");
     second.listInfo = ListInfo(different);
-    EXPECT_EQ(first,second) << "TyperInfo ListInfos are equal, but incorrectly marked unequal";
+    checkInfoEquality("TyperInfo's ListInfo are equal, but found unequal.");
 
     std::string replacementPrompt = "replacementPrompt";
     first.prompt = replacementPrompt;
-    EXPECT_FALSE(first == second) << "TyperInfo prompts are unequal, but declared equal";
+    checkInfoInequality("TyperInfo prompts are unequal, but declared equal");
     second.prompt = replacementPrompt;
-    EXPECT_EQ(first,second) << "TyperInfo prompts are equal, but declared unequal";
+    checkInfoEquality("TyperInfo prompts are equal, but declared unequal");
 
     std::string replacementStream = "replacementStream";
     first.stream = replacementStream;
-    EXPECT_FALSE(first == second) << "TyperInfo streams are unequal, but declared equal";
+    checkInfoInequality("TyperInfo streams are unequal, but declared equal");
     second.stream = replacementStream;
-    EXPECT_EQ(first,second) << "TyperInfo streams are equal, but declared unequal";
+    checkInfoEquality("TyperInfo streams are equal, but declared unequal");
 
     unsigned int replacementSeed = 34;
     first.seed = replacementSeed;
-    EXPECT_FALSE(first == second) << "TyperInfo seeds are unequal, but declared equal";
+    checkInfoInequality("TyperInfo seeds are unequal, but declared equal");
     second.seed = replacementSeed;
-    EXPECT_EQ(first,second) << "TyperInfo seeds are equal, but declared unequal";
+    checkInfoEquality("TyperInfo seeds are equal, but declared unequal");
 }
 
 class ModelInfoTestSuite: public testing::Test {
     protected:
-        ModelInfoTestSuite(): emptyMessages(), emptyTypers(), first(emptyMessages,emptyTypers), 
-                                second(emptyMessages,emptyTypers){ }
         std::map<int,std::string> emptyMessages;
         std::map<int,TyperInfo> emptyTypers;
         ModelInfo first;
         ModelInfo second;
+
+        void checkIfTrue(bool isTrue,std::string message){
+            EXPECT_TRUE(isTrue) << message << "First: " << first << "\nSecond: " << second;
+        }
+
+        ModelInfoTestSuite(): emptyMessages(), emptyTypers(), first(emptyMessages,emptyTypers), 
+                                second(emptyMessages,emptyTypers){ }
 };
 
 TEST_F(ModelInfoTestSuite,Correct){
-    EXPECT_EQ(first,second) << "These ModelInfos are equal, but are labelled unequal";
+    EXPECT_EQ(first,second) << "These ModelInfos are equal, but are labelled unequal.";
 }
 
 TEST_F(ModelInfoTestSuite,CycleThroughIncorrect){
@@ -135,12 +150,12 @@ TEST_F(ModelInfoTestSuite,CycleThroughIncorrect){
     ListInfo empty;
     TyperInfo addedTyper(empty,"A","B",0);
     first.messages[messageId] = message;
-    EXPECT_FALSE(first == second) << "ModelInfo equality operator failed to notice difference in message.";
+    checkIfTrue(!(first == second),"ModelInfo equality operator failed to notice difference in message.");
     second.messages[messageId] = message;
-    EXPECT_EQ(first,second) << "ModelInfo equality operator fails to notice the two are equal after equalizing messages";
+    checkIfTrue(first == second,"ModelInfo equality operator fails to notice the two are equal after equalizing messages");
 
     first.typerValues.insert(std::make_pair(typerId,addedTyper));
-    EXPECT_FALSE(first == second) << "ModelInfo equality operator failed to notice difference in typerValues.";
+    checkIfTrue(!(first == second),"ModelInfo equality operator failed to notice difference in typerValues.");
     second.typerValues.insert(std::make_pair(typerId,addedTyper));
-    EXPECT_EQ(first,second) << "ModelInfo equality operator fails to notice the two are equal after equalizing typerInfos";
+    checkIfTrue(first == second,"ModelInfo equality operator fails to notice the two are equal after equalizing typerInfos");
 }
