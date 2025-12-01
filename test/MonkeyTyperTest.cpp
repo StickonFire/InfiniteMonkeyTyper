@@ -141,7 +141,7 @@ TEST(MonkeyTyperPositionHolderIntegration,SingleCharCorrect){
 }
 
 void moveStreamTestHelper(MonkeyTyper &test, int size, vector<char> &expectedStream, vector<LetterOutcome> &expectedCorrectness, vector<int> &expectedLocation,
-    vector<char> expectedQuery, Status expectedStatus){
+    vector<char> expectedQuery, Status expectedStatus, std::string query, std::string stream, int seed){
 
     EXPECT_EQ(expectedStatus,test.moveStream(size));
     ListInfo resultListInfo = test.listInfo();
@@ -149,6 +149,8 @@ void moveStreamTestHelper(MonkeyTyper &test, int size, vector<char> &expectedStr
     EXPECT_EQ(expectedLocation,resultListInfo.packetBestGuessLocation);
     EXPECT_EQ(expectedCorrectness,resultListInfo.packetCorrectness);
     EXPECT_EQ(expectedQuery,resultListInfo.packetCorrespondingQuery);
+    TyperInfo expectedTyperInfo(resultListInfo,stream,query,seed);
+    EXPECT_EQ(test.typerInfo(),expectedTyperInfo);
 }
 
 TEST(MonkeyTyperStreamTest,SingleStream){
@@ -156,7 +158,8 @@ TEST(MonkeyTyperStreamTest,SingleStream){
     unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
     std::string query = "xyz";
     int size = 7;
-    vector<char> expectedStream{'x','z','x','y','x','y','z'};
+    std::string stream = "xzxyxyz";
+    vector<char> expectedStream(stream.begin(),stream.end());
     vector<LetterOutcome> expectedCorrectness{Match,NoMatch,Match,Match,Fallback,Match,Complete};
     vector<int> expectedLocation{1,0,1,2,1,2,3};
     vector<char> expectedQuery{'x','y','x','y','x','y','z'};
@@ -177,7 +180,7 @@ TEST(MonkeyTyperStreamTest,SingleStream){
 
     MonkeyTyper test(0,std::move(mockSelector),query);
     
-    moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus);
+    moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus,query,stream,0);
 }
 
 TEST(MonkeyTyperStreamTest,DoubleStream){
@@ -185,13 +188,16 @@ TEST(MonkeyTyperStreamTest,DoubleStream){
     unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
     std::string query = "pqrstu";
     int size = 6;
-    vector<char> expectedStream1{'p','q','t','p','q','p'};
+    std::string stream1 = "pqtpqp";
+    vector<char> expectedStream1(stream1.begin(),stream1.end());
     vector<LetterOutcome> expectedCorrectness1{Match,Match,NoMatch,Match,Match,Fallback};
     vector<int> expectedLocation1{1,2,0,1,2,1};
     vector<char> expectedQuery1{'p','q','r','p','q','p'};
     Status expectedStatus1 = PacketReady;
 
-    vector<char> expectedStream2{'q','r','s','t','u','a'};
+    std::string stream2 = "qrstu";
+    vector<char> expectedStream2(stream2.begin(),stream2.end());
+    expectedStream2.push_back('a');
     vector<LetterOutcome> expectedCorrectness2{Match,Match,Match,Match,Complete,Untracked};
     vector<int> expectedLocation2{2,3,4,5,6,0};
     vector<char> expectedQuery2{'q','r','s','t','u','a'};
@@ -217,8 +223,8 @@ TEST(MonkeyTyperStreamTest,DoubleStream){
 
     MonkeyTyper test(0,std::move(mockSelector),query);
     
-    moveStreamTestHelper(test, size, expectedStream1, expectedCorrectness1, expectedLocation1, expectedQuery1, expectedStatus1);
-    moveStreamTestHelper(test, size, expectedStream2, expectedCorrectness2, expectedLocation2, expectedQuery2, expectedStatus2);
+    moveStreamTestHelper(test, size, expectedStream1, expectedCorrectness1, expectedLocation1, expectedQuery1, expectedStatus1,query,stream1,0);
+    moveStreamTestHelper(test, size, expectedStream2, expectedCorrectness2, expectedLocation2, expectedQuery2, expectedStatus2,query,stream1+stream2,0);
 }
 
 TEST(MonkeyTyperStreamTest,KillStream){
@@ -242,7 +248,8 @@ TEST(MonkeyTyperStreamTest,PauseStream){
     unique_ptr<MockLetterSelector> mockSelector = make_unique<MockLetterSelector>();
     std::string query = "xyz";
     int size = 7;
-    vector<char> expectedStream{'x','z','x','y','x','y','z'};
+    std::string stream1 = "xzxyxyz";
+    vector<char> expectedStream(stream1.begin(),stream1.end());
     vector<LetterOutcome> expectedCorrectness{Match,NoMatch,Match,Match,Fallback,Match,Complete};
     vector<int> expectedLocation{1,0,1,2,1,2,3};
     vector<char> expectedQuery{'x','y','x','y','x','y','z'};
@@ -268,7 +275,7 @@ TEST(MonkeyTyperStreamTest,PauseStream){
     EXPECT_EQ(test.getPromptRecord(),0);
 
     test.unpause();
-    moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus);
+    moveStreamTestHelper(test, size, expectedStream, expectedCorrectness, expectedLocation, expectedQuery, expectedStatus,query,stream1,0);
 }
 
 TEST(MonkeyTyperStreamTest,CompleteSupercedingRest){
