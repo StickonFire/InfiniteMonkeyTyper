@@ -26,9 +26,7 @@ TEST(MonkeyTyperFactoryTest,mt19937Test){
     control.moveStream(runs);
     test.moveStream(runs);
 
-    EXPECT_EQ(control.listInfo(),test.listInfo());
-    EXPECT_EQ(control.streamInfo(),test.streamInfo());
-    EXPECT_EQ(control.promptInfo(),test.promptInfo());
+    EXPECT_EQ(control.typerInfo(),test.typerInfo());
 }
 
 /**
@@ -61,9 +59,7 @@ TEST(MonkeyTyperFactoryTest,MockTest){
     vector<char> expectedCorrespondingQuery{'a','b'};
     vector<int> expectedBestLocation{1,2};
     ListInfo expectedInfo(id,2,2,2,expectedPacketStream,expectedOutcome,expectedCorrespondingQuery,expectedBestLocation);
-    StreamInfo expectedStreamInfo(seed,std::string("ab"),expectedInfo);
-    PromptInfo expectedPromptInfo(seed,query,expectedInfo);
+    TyperInfo expectedTyperInfo(expectedInfo,std::string("ab"),query,seed);
     EXPECT_EQ(test.listInfo(),expectedInfo);
-    EXPECT_EQ(test.streamInfo(),expectedStreamInfo);
-    EXPECT_EQ(test.promptInfo(),expectedPromptInfo);
+    EXPECT_EQ(test.typerInfo(),expectedTyperInfo);
 }
