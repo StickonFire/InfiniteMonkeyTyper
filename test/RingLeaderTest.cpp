@@ -47,15 +47,12 @@ TEST_F(RingLeaderWholisticTestSuite,EmptyList){
     std::set<int> usedIds;
     unique_ptr<CounterIdMaker> idGenerator = make_unique<CounterIdMaker>(50,usedIds);
     RingLeader test(empty,std::move(idGenerator));
-    std::vector<ListInfo> expectedResult;
-    EXPECT_EQ(test.listInfo(),expectedResult);
-    EXPECT_EQ(test.typerInfo(),(std::map<int,TyperInfo>()));
 
-    vector<MonkeyTyperStatus> expected;
-    EXPECT_EQ(test.runNCharacters(100),expected);
+    checkInfoStructs(test,"Case no monkeyTypers, and no running.");
 
-    EXPECT_EQ(test.listInfo(),expectedResult);
-    EXPECT_EQ(test.typerInfo(),(std::map<int,TyperInfo>()));
+    EXPECT_EQ(test.runNCharacters(100),expectedStatus);
+
+    checkInfoStructs(test,"Case no monkeyTypers, and has run typers once.");
 }
 
 TEST_F(RingLeaderWholisticTestSuite,OneMonkeyTyper){
