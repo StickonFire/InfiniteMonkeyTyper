@@ -41,6 +41,7 @@ struct TyperInfo{
 
     bool operator==(const TyperInfo &other) const;
     TyperInfo(ListInfo& listInfo, std::string stream, std::string prompt, unsigned int seed);
+    TyperInfo();
 };
 
 std::ostream& operator<<(std::ostream &os, const TyperInfo add);

@@ -55,6 +55,13 @@ bool ListInfo::operator==(const ListInfo &other) const {
         && this->packetBestGuessLocation == other.packetBestGuessLocation;
 }
 
+TyperInfo::TyperInfo(){
+    this->listInfo = ListInfo();
+    this->stream = "";
+    this->prompt = "";
+    this->seed = 0;
+}
+
 TyperInfo::TyperInfo(ListInfo& listInfo, std::string stream, std::string prompt, unsigned int seed){
     this->listInfo = listInfo;
     this->stream = stream;
