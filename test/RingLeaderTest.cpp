@@ -28,6 +28,10 @@ class RingLeaderWholisticTestSuite : public testing::Test {
         std::map<int,TyperInfo> expectedTyperInfo;
         std::vector<MonkeyTyperStatus> expectedStatus;
 
+        void checkInfoStructs(RingLeader &test, std::string message){
+            EXPECT_EQ(test.listInfo(),expectedListInfo) << message << "ListInfo failed to match!";
+            EXPECT_EQ(test.typerInfo(),expectedTyperInfo) << message << "TyperInfos failed to match!";
+        }
 };
 
 /**
