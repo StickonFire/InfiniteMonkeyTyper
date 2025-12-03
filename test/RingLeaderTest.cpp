@@ -7,6 +7,7 @@
 #include <gmock/gmock.h>
 
 using ::testing::Return;
+using ::testing::Test;
 using ::testing::Mock;
 using ::testing::_;
 
@@ -20,6 +21,15 @@ ostream& operator<<(ostream& os, vector<T> other){
     return os;
 }
 
+class RingLeaderWholisticTestSuite : public testing::Test {
+
+    protected:
+        std::vector<ListInfo> expectedListInfo;
+        std::map<int,TyperInfo> expectedTyperInfo;
+        std::vector<MonkeyTyperStatus> expectedStatus;
+
+};
+
 /**
  * Wholistic tests for the following functions:
  *  - Constructor
@@ -28,7 +38,7 @@ ostream& operator<<(ostream& os, vector<T> other){
  *  - promptInfo
  *  - streamInfo
  */
-TEST(RingLeaderWholisticTest,EmptyList){
+TEST_F(RingLeaderWholisticTestSuite,EmptyList){
     std::map<int,MonkeyTyper> empty;
     std::set<int> usedIds;
     unique_ptr<CounterIdMaker> idGenerator = make_unique<CounterIdMaker>(50,usedIds);
@@ -44,7 +54,7 @@ TEST(RingLeaderWholisticTest,EmptyList){
     EXPECT_EQ(test.typerInfo(),(std::map<int,TyperInfo>()));
 }
 
-TEST(RingLeaderWholisticTest,OneMonkeyTyper){
+TEST_F(RingLeaderWholisticTestSuite,OneMonkeyTyper){
     std::map<int,MonkeyTyper> onlyOne;
     unique_ptr<MockLetterSelector> selector = make_unique<MockLetterSelector>();
     EXPECT_CALL(*selector,selectCharacter())
@@ -94,7 +104,7 @@ TEST(RingLeaderWholisticTest,OneMonkeyTyper){
     EXPECT_FALSE(test.promptInfo(2));
 }
 
-TEST(RingLeaderWholisticTest,TwoMonkeysOneUnrun){
+TEST_F(RingLeaderWholisticTestSuite,TwoMonkeysOneUnrun){
     std::map<int,MonkeyTyper> two;
     unique_ptr<MockLetterSelector> firstSelector = make_unique<MockLetterSelector>();
     unique_ptr<MockLetterSelector> secondSelector = make_unique<MockLetterSelector>();
