@@ -21,6 +21,24 @@ ostream& operator<<(ostream& os, vector<T> other){
     return os;
 }
 
+namespace {
+    template<typename Contained>
+    struct VectorSlicer{
+        std::vector<Contained> container;
+        typename std::vector<Contained>::iterator containerItr;
+
+        VectorSlicer(std::vector<Contained> container): container(container), containerItr(this->container.begin()) { }
+
+        std::vector<Contained> slice(int size){
+            typename std::vector<Contained>::iterator end = containerItr;
+            end += size;
+            std::vector<Contained> result(containerItr,end);
+            containerItr = end;
+            return result;
+        }
+    };
+}
+
 class RingLeaderWholisticTestSuite : public testing::Test {
 
     protected:
@@ -42,6 +60,14 @@ class RingLeaderWholisticTestSuite : public testing::Test {
  *  - promptInfo
  *  - streamInfo
  */
+TEST(SlicerTest,SliceTwice){
+    vector<int> toSlice{0,1,2};
+    VectorSlicer<int> test(toSlice);
+
+    EXPECT_EQ(test.slice(1),vector<int>{0});
+    EXPECT_EQ(test.slice(2),(vector<int>{1,2}));
+}
+
 TEST_F(RingLeaderWholisticTestSuite,EmptyList){
     std::map<int,MonkeyTyper> empty;
     std::set<int> usedIds;
