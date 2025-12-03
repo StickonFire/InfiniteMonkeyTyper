@@ -37,6 +37,34 @@ namespace {
             return result;
         }
     };
+
+    struct ExpectedListInfoConstructor{
+        int id;
+        VectorSlicer<char> expectedStream;
+        VectorSlicer<char> expectedCorrespondingQuery;
+        VectorSlicer<LetterOutcome> expectedOutcome;
+        VectorSlicer<int> expectedBestLocation;
+
+        VectorSlicer<int> expectedCurrentLocation;
+        VectorSlicer<int> expectedRecord;
+        VectorSlicer<int> expectedSize;
+
+        ExpectedListInfoConstructor(int id, std::vector<char> expectedStream, std::vector<char> expectedCorrespondingQuery, std::vector<LetterOutcome> expectedOutcome,
+            std::vector<int> expectedBestLocation, std::vector<int> expectedCurrentLocation, std::vector<int> expectedRecord, std::vector<int> expectedSize) :
+            id(id), expectedStream(expectedStream), expectedCorrespondingQuery(expectedCorrespondingQuery), expectedOutcome(expectedOutcome), expectedBestLocation(expectedBestLocation),
+            expectedCurrentLocation(expectedCurrentLocation), expectedRecord(expectedRecord), expectedSize(expectedSize) { };
+
+        ListInfo generateNextListInfo(int size){
+            vector<char> stream = expectedStream.slice(size);
+            vector<LetterOutcome> outcome = expectedOutcome.slice(size);
+            vector<char> corresponding = expectedCorrespondingQuery.slice(size);
+            vector<int> bestLocation = expectedBestLocation.slice(size);
+            int currentLocation = expectedCurrentLocation.slice(1)[0];
+            int streamSize = expectedSize.slice(1)[0];
+            int record = expectedRecord.slice(1)[0];
+            return ListInfo(id,currentLocation,streamSize,record,stream,outcome,corresponding,bestLocation);
+        }
+    };
 }
 
 class RingLeaderWholisticTestSuite : public testing::Test {
@@ -60,12 +88,38 @@ class RingLeaderWholisticTestSuite : public testing::Test {
  *  - promptInfo
  *  - streamInfo
  */
-TEST(SlicerTest,SliceTwice){
+TEST(TestApparatusCheck,SliceTwice){
     vector<int> toSlice{0,1,2};
     VectorSlicer<int> test(toSlice);
 
     EXPECT_EQ(test.slice(1),vector<int>{0});
     EXPECT_EQ(test.slice(2),(vector<int>{1,2}));
+}
+
+TEST(TestApparatusCheck,ExpectedListInfoConstructorTest){
+    int id = 200;
+    vector<char> stream{'a','b','c'};
+    vector<LetterOutcome> outcome{Match,NoMatch,Fallback};
+    vector<char> corresponding{'d','e','f'};
+    vector<int> location{1,2,3};
+    vector<int> currentLocation{1,3};
+    vector<int> expectedRecord{5,6};
+    vector<int> expectedSize{1,3};
+    ExpectedListInfoConstructor test(id,stream,corresponding,outcome,location,currentLocation,expectedRecord,expectedSize);
+    
+    stream = vector<char>{'a'};
+    outcome = vector<LetterOutcome>{Match};
+    corresponding = vector<char>{'d'};
+    location = vector<int>{1};
+    ListInfo firstExpectation(id,location[0],expectedSize[0],expectedRecord[0],stream,outcome,corresponding,location);
+    EXPECT_EQ(firstExpectation,test.generateNextListInfo(1));
+
+    stream = vector<char>{'b','c'};
+    outcome = vector<LetterOutcome>{NoMatch,Fallback};
+    corresponding = vector<char>{'e','f'};
+    location = vector<int>{2,3};
+    ListInfo secondExpectation(id,location[1],expectedSize[1],expectedRecord[1],stream,outcome,corresponding,location);
+    EXPECT_EQ(secondExpectation,test.generateNextListInfo(2));
 }
 
 TEST_F(RingLeaderWholisticTestSuite,EmptyList){
