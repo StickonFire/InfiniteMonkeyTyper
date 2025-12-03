@@ -80,6 +80,10 @@ class RingLeader {
         std::optional<StreamInfo> streamInfo(int id);
         std::optional<PromptInfo> promptInfo(int id);
         /**
+         * Generates a map of TyperInfos each describing a specific monkeyTyper within the RingLeader.
+         */
+        std::map<int,TyperInfo> typerInfo();
+        /**
          * Generates a monkeyTyper using the query and the seed. It additionally assigns an id to the MonkeyTyper.
          * @return id of the generated MonkeyTyper
          */

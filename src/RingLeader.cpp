@@ -78,6 +78,14 @@ std::optional<PromptInfo> RingLeader::promptInfo(int id){
     return { };
 }
 
+std::map<int,TyperInfo> RingLeader::typerInfo(){
+    std::map<int,TyperInfo> result;
+    for(std::map<int,MonkeyTyper>::iterator itr = typers.begin(); itr != typers.end(); itr++){
+        result[itr->first] = itr->second.typerInfo();
+    }
+    return result;
+}
+
 int RingLeader::createMonkeyTyper(std::string query, unsigned int seed){
     int id = idGenerator->generateId();
     MonkeyTyper toInsert = monkeyProducer->build(id,seed,query);
