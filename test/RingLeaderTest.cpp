@@ -67,6 +67,18 @@ namespace {
             }
     };
 
+    class ExpectedTyperInfoConstructor{
+        VectorSlicer<std::string> streams;
+        std::string prompt;
+        unsigned int seed;
+        
+        public:
+            ExpectedTyperInfoConstructor(std::vector<std::string> streams,std::string prompt,unsigned int seed):
+                streams(streams),prompt(prompt),seed(seed) { }
+
+            TyperInfo generateNextTyperInfo(ListInfo listInfo){
+                return TyperInfo(listInfo,streams.slice(1)[0],prompt,seed);
+            }
     };
 }
 
