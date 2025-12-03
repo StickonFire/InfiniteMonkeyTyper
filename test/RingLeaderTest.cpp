@@ -38,7 +38,7 @@ namespace {
         }
     };
 
-    struct ExpectedListInfoConstructor{
+    class ExpectedListInfoConstructor{
         int id;
         VectorSlicer<char> expectedStream;
         VectorSlicer<char> expectedCorrespondingQuery;
@@ -49,26 +49,28 @@ namespace {
         VectorSlicer<int> expectedRecord;
         VectorSlicer<int> expectedSize;
 
-        ExpectedListInfoConstructor(int id, std::vector<char> expectedStream, std::vector<char> expectedCorrespondingQuery, std::vector<LetterOutcome> expectedOutcome,
-            std::vector<int> expectedBestLocation, std::vector<int> expectedCurrentLocation, std::vector<int> expectedRecord, std::vector<int> expectedSize) :
-            id(id), expectedStream(expectedStream), expectedCorrespondingQuery(expectedCorrespondingQuery), expectedOutcome(expectedOutcome), expectedBestLocation(expectedBestLocation),
-            expectedCurrentLocation(expectedCurrentLocation), expectedRecord(expectedRecord), expectedSize(expectedSize) { };
+        public:
+            ExpectedListInfoConstructor(int id,std::vector<int> expectedCurrentLocation, std::vector<int> expectedSize, std::vector<int> expectedRecord, std::vector<char> expectedStream, std::vector<LetterOutcome> expectedOutcome, std::vector<char> expectedCorrespondingQuery, 
+                std::vector<int> expectedBestLocation) :
+                id(id), expectedStream(expectedStream), expectedCorrespondingQuery(expectedCorrespondingQuery), expectedOutcome(expectedOutcome), expectedBestLocation(expectedBestLocation),
+                expectedCurrentLocation(expectedCurrentLocation), expectedRecord(expectedRecord), expectedSize(expectedSize) { };
 
-        ListInfo generateNextListInfo(int size){
-            vector<char> stream = expectedStream.slice(size);
-            vector<LetterOutcome> outcome = expectedOutcome.slice(size);
-            vector<char> corresponding = expectedCorrespondingQuery.slice(size);
-            vector<int> bestLocation = expectedBestLocation.slice(size);
-            int currentLocation = expectedCurrentLocation.slice(1)[0];
-            int streamSize = expectedSize.slice(1)[0];
-            int record = expectedRecord.slice(1)[0];
-            return ListInfo(id,currentLocation,streamSize,record,stream,outcome,corresponding,bestLocation);
-        }
+            ListInfo generateNextListInfo(int size){
+                vector<char> stream = expectedStream.slice(size);
+                vector<LetterOutcome> outcome = expectedOutcome.slice(size);
+                vector<char> corresponding = expectedCorrespondingQuery.slice(size);
+                vector<int> bestLocation = expectedBestLocation.slice(size);
+                int currentLocation = expectedCurrentLocation.slice(1)[0];
+                int streamSize = expectedSize.slice(1)[0];
+                int record = expectedRecord.slice(1)[0];
+                return ListInfo(id,currentLocation,streamSize,record,stream,outcome,corresponding,bestLocation);
+            }
+    };
+
     };
 }
 
 class RingLeaderWholisticTestSuite : public testing::Test {
-
     protected:
         std::vector<ListInfo> expectedListInfo;
         std::map<int,TyperInfo> expectedTyperInfo;
@@ -105,7 +107,7 @@ TEST(TestApparatusCheck,ExpectedListInfoConstructorTest){
     vector<int> currentLocation{1,3};
     vector<int> expectedRecord{5,6};
     vector<int> expectedSize{1,3};
-    ExpectedListInfoConstructor test(id,stream,corresponding,outcome,location,currentLocation,expectedRecord,expectedSize);
+    ExpectedListInfoConstructor test(id,currentLocation,expectedSize,expectedRecord,stream,outcome,corresponding,location);
     
     stream = vector<char>{'a'};
     outcome = vector<LetterOutcome>{Match};
