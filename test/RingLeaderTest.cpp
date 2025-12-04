@@ -296,11 +296,51 @@ TEST_F(RingLeaderWholisticTestSuite,TwoMonkeysOneUnrun){
     checkInfoStructs(test,"Case Two MonkeyTypers, with both run");
 }
 
-TEST(RingLeaderTest,PauseTests){
-    std::map<int,MonkeyTyper> two;
-    
+/**
+ * This tests all 4 combinations 2 monkeyTypers can have with their pause status.
+ * These combinations are the following:
+ * Runs:         1       2        3      4
+ * MonkeyTyper1: Pause   Unpaused Paused Unpaused
+ * MonkeyTyper2: Unpause Paused   Paused Unpaused
+ */
+TEST_F(RingLeaderWholisticTestSuite,PauseTests){    
     std::string query1 = "abc";
     int id1 = 0;
+    std::string query2 = "cd";
+    int id2 = 1;
+    vector<int> runSize{1,2};
+    ExpectedListInfoConstructor firstListInfoConstructor(
+        id1,
+        std::vector<int>{1,3},
+        std::vector<int>{1,3},
+        std::vector<int>{1,3},
+        std::vector<char>{'a','b','c'},
+        std::vector<LetterOutcome>{Match,Match,Complete},
+        std::vector<char>{'a','b','c'},
+        std::vector<int>{1,2,3}
+    );
+    ExpectedTyperInfoConstructor firstTyperInfoConstructor(
+        std::vector<std::string>{"a","abc"},
+        query1,
+        id1
+    );
+    ExpectedListInfoConstructor secondListInfoConstructor(
+        id2,
+        std::vector<int>{1,0},
+        std::vector<int>{1,3},
+        std::vector<int>{1,1},
+        std::vector<char>{'c','b','d'},
+        std::vector<LetterOutcome>{Match,NoMatch,NoMatch},
+        std::vector<char>{'c','d','c'},
+        std::vector<int>{1,0,0}
+    );
+    ExpectedTyperInfoConstructor secondTyperInfoConstructor(
+        std::vector<std::string>{"c","cbd"},
+        query2,
+        id2
+    );
+
+    std::map<int,MonkeyTyper> two;
     unique_ptr<MockLetterSelector> selector1 = make_unique<MockLetterSelector>();
     EXPECT_CALL(*selector1,getSeed())
         .Times(1)
@@ -311,8 +351,6 @@ TEST(RingLeaderTest,PauseTests){
         .WillOnce(Return(query1[1]))
         .WillOnce(Return(query1[2]));
     
-    std::string query2 = "cd";
-    int id2 = 1;
     unique_ptr<MockLetterSelector> selector2 = make_unique<MockLetterSelector>();
     EXPECT_CALL(*selector2,getSeed())
         .Times(1)
@@ -325,112 +363,52 @@ TEST(RingLeaderTest,PauseTests){
     
     MonkeyTyper first(id1,std::move(selector1),query1);
     MonkeyTyper second(id2,std::move(selector2),query2);
-
     two.insert(std::make_pair(id1,std::move(first)));
     two.insert(std::make_pair(id2,std::move(second)));
-
     RingLeader test(two,nullptr);
 
-    vector<char> stream1;
-    vector<LetterOutcome> outcome1;
-    vector<char> corresponding1;
-    vector<int> location1;
-    ListInfo expectedList1(id1,0,0,0,stream1,outcome1,corresponding1,location1);
-    StreamInfo expectedStream1(id1,"",expectedList1);
-    PromptInfo expectedPrompt1(id1,query1,expectedList1);
+    expectedListInfo.push_back(firstListInfoConstructor.generateEmptyListInfo());
+    expectedListInfo.push_back(secondListInfoConstructor.generateEmptyListInfo());
 
-    vector<char> stream2;
-    vector<LetterOutcome> outcome2;
-    vector<char> corresponding2;
-    vector<int> location2;
-    ListInfo expectedList2(id2,0,0,0,stream2,outcome2,corresponding2,location2);
-    StreamInfo expectedStream2(id2,"",expectedList2);
-    PromptInfo expectedPrompt2(id2,query2,expectedList2);
-
-    test.pauseMonkeyTyper(id1);
-    test.unpauseMonkeyTyper(id2);
-
-    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedList1,expectedList2}));
-    EXPECT_EQ(test.streamInfo(id1),expectedStream1);
-    EXPECT_EQ(test.promptInfo(id1),expectedPrompt1);
-    EXPECT_EQ(test.streamInfo(id2),expectedStream2);
-    EXPECT_EQ(test.promptInfo(id2),expectedPrompt2);
+    expectedTyperInfo[id1] = firstTyperInfoConstructor.generateEmptyTyperInfo(id1);
+    expectedTyperInfo[id2] = secondTyperInfoConstructor.generateEmptyTyperInfo(id2);
+    checkInfoStructs(test,"PauseTest, Case Both Typers Initialized.");
 
 
     //First Run. First MT is paused, second unpaused
+    test.pauseMonkeyTyper(id1);
+    test.unpauseMonkeyTyper(id2);
     EXPECT_EQ(test.runNCharacters(1),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Paused),MonkeyTyperStatus(id2,PacketReady)}));
 
-    stream2 = vector<char>{'c'};
-    outcome2 = vector<LetterOutcome>{Match};
-    corresponding2 = vector<char>{'c'};
-    location2 = vector<int>{1};
-    expectedList2 = ListInfo(id2,1,1,1,stream2,outcome2,corresponding2,location2);
-    expectedPrompt2.listInfo = expectedList2;
-    expectedStream2.listInfo = expectedList2;
-    expectedStream2.stream = "c";
-    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedList1,expectedList2}));
-    EXPECT_EQ(test.streamInfo(id1),expectedStream1);
-    EXPECT_EQ(test.promptInfo(id1),expectedPrompt1);
-    EXPECT_EQ(test.streamInfo(id2),expectedStream2);
-    EXPECT_EQ(test.promptInfo(id2),expectedPrompt2);
+    expectedListInfo[1] = secondListInfoConstructor.generateNextListInfo(runSize[0]);
+    expectedTyperInfo[id2] = secondTyperInfoConstructor.generateNextTyperInfo(expectedListInfo[1]);
+    checkInfoStructs(test,"Pause Test. First Paused, Second Unpaused.");
 
     //second run. first MT unpaused, second paused.
     test.unpauseMonkeyTyper(id1);
     test.pauseMonkeyTyper(id2);
-
     EXPECT_EQ(test.runNCharacters(1),(vector<MonkeyTyperStatus>{MonkeyTyperStatus{id1,PacketReady},MonkeyTyperStatus{id2,Paused}}));
 
-    stream1 = vector<char>{'a'};
-    outcome1 = vector<LetterOutcome>{Match};
-    corresponding1 = vector<char>{'a'};
-    location1 = vector<int>{1};
-    expectedList1 = ListInfo(id1,1,1,1,stream1,outcome1,corresponding1,location1);
-    expectedPrompt1.listInfo = expectedList1;
-    expectedStream1.listInfo = expectedList1;
-    expectedStream1.stream = "a";
-    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedList1,expectedList2}));
-    EXPECT_EQ(test.streamInfo(id1),expectedStream1);
-    EXPECT_EQ(test.promptInfo(id1),expectedPrompt1);
-    EXPECT_EQ(test.streamInfo(id2),expectedStream2);
-    EXPECT_EQ(test.promptInfo(id2),expectedPrompt2);
+    expectedListInfo[0] = firstListInfoConstructor.generateNextListInfo(runSize[0]);
+    expectedTyperInfo[id1] = firstTyperInfoConstructor.generateNextTyperInfo(expectedListInfo[0]);
+    checkInfoStructs(test,"Pause Test. First unpaused, Second Paused.");
+
     //Third "run". both MTs paused.
     test.pauseMonkeyTyper(id1);
     test.pauseMonkeyTyper(id2);
-    
     EXPECT_EQ(test.runNCharacters(999),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Paused),MonkeyTyperStatus(id2,Paused)}));
+    checkInfoStructs(test,"Pause Test. Both Paused.");
     
     //Fourth run. both MTS unpaused.
     test.unpauseMonkeyTyper(id1);
     test.unpauseMonkeyTyper(id2);
-
-    stream1 = vector<char>{'b','c'};
-    outcome1 = vector<LetterOutcome>{Match,Complete};
-    corresponding1 = vector<char>{'b','c'};
-    location1 = vector<int>{2,3};
-    expectedList1 = ListInfo(id1,3,3,3,stream1,outcome1,corresponding1,location1);
-    expectedPrompt1.listInfo = expectedList1;
-    expectedStream1.listInfo = expectedList1;
-    expectedStream1.stream = "abc";
-
-    expectedList2.currentLocation = 0;
-    expectedList2.guessStreamSize = 3;
-    expectedList2.promptRecord = 1;
-    stream2 = vector<char>{'b','d'};
-    outcome2 = vector<LetterOutcome>{NoMatch,NoMatch};
-    corresponding2 = vector<char>{'d','c'};
-    location2 = vector<int>{0,0};
-    expectedList2 = ListInfo(id2,0,3,1,stream2,outcome2,corresponding2,location2);
-    expectedPrompt2.listInfo = expectedList2;
-    expectedStream2.listInfo = expectedList2;
-    expectedStream2.stream = "cbd";
-
     EXPECT_EQ(test.runNCharacters(2),(vector<MonkeyTyperStatus>{MonkeyTyperStatus(id1,Completed),MonkeyTyperStatus(id2,PacketReady)}));
-    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedList1,expectedList2}));
-    EXPECT_EQ(test.promptInfo(id1),expectedPrompt1);
-    EXPECT_EQ(test.streamInfo(id1),expectedStream1);
-    EXPECT_EQ(test.promptInfo(id2),expectedPrompt2);
-    EXPECT_EQ(test.streamInfo(id2),expectedStream2);
 
+    expectedListInfo[0] = firstListInfoConstructor.generateNextListInfo(runSize[1]);
+    expectedTyperInfo[id1] = firstTyperInfoConstructor.generateNextTyperInfo(expectedListInfo[0]);
+    expectedListInfo[1] = secondListInfoConstructor.generateNextListInfo(runSize[1]);
+    expectedTyperInfo[id2] = secondTyperInfoConstructor.generateNextTyperInfo(expectedListInfo[1]);
+    checkInfoStructs(test,"Pause Test. Both Unpaused.");
 }
 
 TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
