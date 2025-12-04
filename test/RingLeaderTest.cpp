@@ -211,6 +211,45 @@ TEST_F(RingLeaderWholisticTestSuite,OneMonkeyTyper){
 }
 
 TEST_F(RingLeaderWholisticTestSuite,TwoMonkeysOneUnrun){
+    int firstId = 1;
+    int secondId = 2;
+    unsigned int firstSeed = 2;
+    unsigned int secondSeed = 2;
+    std::string firstQuery = "aa";
+    std::string secondQuery = "c";
+
+    ExpectedListInfoConstructor firstListInfoConstructor(
+        firstId,
+        std::vector<int>{1,0},
+        std::vector<int>{1,2},
+        std::vector<int>{1,1},
+        std::vector<char>{'a','b'},
+        std::vector<LetterOutcome>{Match,NoMatch},
+        std::vector<char>{'a','a'},
+        std::vector<int>{1,0}
+    );
+    ExpectedTyperInfoConstructor firstTyperInfoConstructor(
+        std::vector<std::string>{"a","ab"},
+        firstQuery,
+        firstSeed
+    );
+    ExpectedListInfoConstructor secondListInfoConstructor(
+        secondId,
+        std::vector<int>{1},
+        std::vector<int>{1},
+        std::vector<int>{1},
+        std::vector<char>{'c'},
+        std::vector<LetterOutcome>{Complete},
+        std::vector<char>{'c'},
+        std::vector<int>{1}
+    );
+    ExpectedTyperInfoConstructor secondTyperInfoConstructor(
+        std::vector<std::string>{"c"},
+        secondQuery,
+        secondSeed
+    );
+
+
     std::map<int,MonkeyTyper> two;
     unique_ptr<MockLetterSelector> firstSelector = make_unique<MockLetterSelector>();
     unique_ptr<MockLetterSelector> secondSelector = make_unique<MockLetterSelector>();
@@ -221,79 +260,40 @@ TEST_F(RingLeaderWholisticTestSuite,TwoMonkeysOneUnrun){
         .WillOnce(Return('b'));
     EXPECT_CALL(*firstSelector,getSeed())
         .Times(1)
-        .WillOnce(Return(2));
+        .WillOnce(Return(firstSeed));
     EXPECT_CALL(*secondSelector,selectCharacter())
         .Times(1)
         .WillOnce(Return('c'));
     EXPECT_CALL(*secondSelector,getSeed())
         .Times(1)
-        .WillOnce(Return(2));
+        .WillOnce(Return(secondSeed));
 
-    int firstId = 1;
-    int secondId = 2;
-    std::string firstQuery = "aa";
     MonkeyTyper firstTyper(firstId,std::move(firstSelector),firstQuery);
     firstTyper.moveStream(1);
-    std::string secondQuery = "c";
     MonkeyTyper secondTyper(secondId,std::move(secondSelector),"c");
-
     two.insert(std::make_pair(firstId,std::move(firstTyper)));
     two.insert(std::make_pair(secondId,std::move(secondTyper)));
 
     unique_ptr<CounterIdMaker> idMaker = make_unique<CounterIdMaker>(100,std::set<int>());
-
     RingLeader test(two,std::move(idMaker));
 
-    vector<ListInfo> expectedList;
-    vector<char> firstPacketStream{'a'};
-    vector<LetterOutcome> firstOutcomeStream{Match};
-    vector<char> firstCorrespondingQuery{'a'};
-    vector<int> firstPacketBestGuessLocation{1};
-    ListInfo firstResult(1,1,1,1,firstPacketStream,firstOutcomeStream,firstCorrespondingQuery,firstPacketBestGuessLocation);
-    ListInfo secondResult;
-    secondResult.id = 2;
+    expectedListInfo.push_back(firstListInfoConstructor.generateNextListInfo(1));
+    expectedListInfo.push_back(secondListInfoConstructor.generateEmptyListInfo());
 
-    expectedList.push_back(firstResult);
-    expectedList.push_back(secondResult);
+    expectedTyperInfo[firstId] = firstTyperInfoConstructor.generateNextTyperInfo(expectedListInfo[0]);
+    expectedTyperInfo[secondId] = secondTyperInfoConstructor.generateEmptyTyperInfo(secondId);
 
-    StreamInfo expectedFirstStreamInfo(2,"a",firstResult);
-    PromptInfo expectedFirstPromptInfo(2,firstQuery,firstResult);
-    StreamInfo expectedSecondStreamInfo(2,"",secondResult);
-    PromptInfo expectedSecondPromptInfo(2,secondQuery,secondResult);
-
-    EXPECT_EQ(test.listInfo(),expectedList);
-    EXPECT_EQ(test.streamInfo(1),expectedFirstStreamInfo);
-    EXPECT_EQ(test.promptInfo(1),expectedFirstPromptInfo);
-    EXPECT_EQ(test.streamInfo(2),expectedSecondStreamInfo);
-    EXPECT_EQ(test.promptInfo(2),expectedSecondPromptInfo);
+    checkInfoStructs(test,"Case Two MonkeyTypers, with one unrun.");
 
     std::vector<MonkeyTyperStatus> expectedStatus{MonkeyTyperStatus(1,PacketReady),MonkeyTyperStatus(2,Completed)};
     EXPECT_EQ(test.runNCharacters(1),expectedStatus);
 
-    firstPacketStream = vector<char>{'b'};
-    firstPacketBestGuessLocation = vector<int>{0};
-    firstOutcomeStream = vector<LetterOutcome>{NoMatch};
-    firstCorrespondingQuery = vector<char>{'a'};
-    expectedList[0] = ListInfo(firstId,0,2,1,firstPacketStream,firstOutcomeStream,firstCorrespondingQuery,firstPacketBestGuessLocation);
-    expectedFirstStreamInfo.stream = "ab";
-    expectedFirstStreamInfo.listInfo = expectedList[0];
-    expectedFirstPromptInfo.listInfo = expectedList[0];
+    expectedListInfo[0] = firstListInfoConstructor.generateNextListInfo(1);
+    expectedListInfo[1] = secondListInfoConstructor.generateNextListInfo(1);
+    expectedTyperInfo[firstId] = firstTyperInfoConstructor.generateNextTyperInfo(expectedListInfo[0]);
+    expectedTyperInfo[secondId] = secondTyperInfoConstructor.generateNextTyperInfo(expectedListInfo[1]);
 
-    vector<char> secondPacketStream = vector<char>{'c'};
-    vector<LetterOutcome> secondOutcomeStream = vector<LetterOutcome>{Complete};
-    vector<char> secondCorrespondingQuery = vector<char>{'c'};
-    vector<int> secondPacketBestGuessLocation = vector<int>{1};
-    expectedList[1] = ListInfo(secondId,1,1,1,secondPacketStream,secondOutcomeStream,secondCorrespondingQuery,secondPacketBestGuessLocation);
-
-    expectedSecondStreamInfo.stream = "c";
-    expectedSecondStreamInfo.listInfo = expectedList[1];
-    expectedSecondPromptInfo.listInfo = expectedList[1];
-
-    EXPECT_EQ(test.listInfo(),expectedList);
-    EXPECT_EQ(test.streamInfo(1),expectedFirstStreamInfo);
-    EXPECT_EQ(test.promptInfo(1),expectedFirstPromptInfo);
-    EXPECT_EQ(test.streamInfo(2),expectedSecondStreamInfo);
-    EXPECT_EQ(test.promptInfo(2),expectedSecondPromptInfo);
+    checkInfoStructs(test,"Case Two MonkeyTypers, with both run");
 }
 
 TEST(RingLeaderTest,PauseTests){
