@@ -65,6 +65,13 @@ namespace {
                 int record = expectedRecord.slice(1)[0];
                 return ListInfo(id,currentLocation,streamSize,record,stream,outcome,corresponding,bestLocation);
             }
+
+            ListInfo generateEmptyListInfo(){
+                vector<char> emptyChar;
+                vector<LetterOutcome> emptyOutcome;
+                vector<int> emptyInt;
+                return ListInfo(id,0,0,0,emptyChar,emptyOutcome,emptyChar,emptyInt);
+            }
     };
 
     class ExpectedTyperInfoConstructor{
@@ -78,6 +85,12 @@ namespace {
 
             TyperInfo generateNextTyperInfo(ListInfo listInfo){
                 return TyperInfo(listInfo,streams.slice(1)[0],prompt,seed);
+            }
+
+            TyperInfo generateEmptyTyperInfo(int id){
+                ListInfo empty;
+                empty.id = id;
+                return TyperInfo(empty,std::string(""),prompt,seed);
             }
     };
 }
