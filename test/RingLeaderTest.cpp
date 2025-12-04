@@ -411,7 +411,6 @@ TEST_F(RingLeaderWholisticTestSuite,PauseTests){
     checkInfoStructs(test,"Pause Test. Both Unpaused.");
 }
 
-TEST(RingLeaderTest,CreateAndRemoveMonkeyTypers){
 TEST_F(RingLeaderWholisticTestSuite,CreateAndRemoveMonkeyTypers){
     int id1 = 10;
     int id2 = 20;
