@@ -3,6 +3,8 @@
 #include "mockClasses.hpp"
 
 #include <memory>
+#include <numeric>
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -544,7 +546,7 @@ TEST_F(RingLeaderWholisticTestSuite,CreateAndRemoveMonkeyTypers){
 /**
  * This test uses the current classes with no mock values. 
  */
-TEST(RingLeaderTest,NoMocks){
+TEST_F(RingLeaderWholisticTestSuite,NoMocks){
     unsigned int seed = 200;
     int startCounter = 399;
     int querySize = 94;
@@ -553,6 +555,27 @@ TEST(RingLeaderTest,NoMocks){
     for(int i = 0; i < querySize; i++){
         query.push_back(control.selectCharacter());
     }
+    std::vector<int> bestGuessLocation(querySize,0);
+    std::iota(bestGuessLocation.begin(),bestGuessLocation.end(),1);
+    std::vector<LetterOutcome> outcomes(querySize,Match);
+    outcomes[querySize-1] = Complete;
+
+
+    ExpectedListInfoConstructor firstListInfoConstructor(
+        startCounter,
+        std::vector<int>{querySize},
+        std::vector<int>{querySize},
+        std::vector<int>{querySize},
+        std::vector<char>(query.begin(),query.end()),
+        outcomes,
+        std::vector<char>(query.begin(),query.end()),
+        bestGuessLocation
+    );
+    ExpectedTyperInfoConstructor firstTyperInfoConstructor(
+        std::vector<std::string>{query},
+        query,
+        seed
+    );
     
     unique_ptr<CounterIdMaker> counter = make_unique<CounterIdMaker>(startCounter,std::set<int>());
     unique_ptr<mt19937MonkeyTyperFactory> factory = make_unique<mt19937MonkeyTyperFactory>();
@@ -560,29 +583,12 @@ TEST(RingLeaderTest,NoMocks){
     RingLeader test(typers,std::move(counter),std::move(factory));
 
     test.createMonkeyTyper(query,seed);
-    vector<char> expectedStream;
-    vector<LetterOutcome> expectedOutcome;
-    vector<char> expectedCorresponding;
-    vector<int> expectedLocation;
-    ListInfo expectedListInfo(startCounter,0,0,0,expectedStream,expectedOutcome,expectedCorresponding,expectedLocation);
-    StreamInfo expectedStreamInfo(seed,std::string(""),expectedListInfo);
-    PromptInfo expectedPromptInfo(seed,query,expectedListInfo);
-    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedListInfo}));
-    EXPECT_EQ(test.promptInfo(startCounter),expectedPromptInfo);
-    EXPECT_EQ(test.streamInfo(startCounter),expectedStreamInfo);
+    expectedListInfo.push_back(firstListInfoConstructor.generateEmptyListInfo());
+    expectedTyperInfo[startCounter] = firstTyperInfoConstructor.generateEmptyTyperInfo(startCounter);
+    checkInfoStructs(test,"Initialize nonmock MonkeyTyper.");
+
     EXPECT_EQ(test.runNCharacters(querySize),(std::vector<MonkeyTyperStatus>{MonkeyTyperStatus(startCounter,Completed)}));
-    for(int i = 0; i < querySize; i++){
-        expectedStream.push_back(query[i]);
-        expectedCorresponding.push_back(query[i]);
-        expectedLocation.push_back(i+1);
-    }
-    expectedOutcome = vector<LetterOutcome>(querySize-1,Match);
-    expectedOutcome.push_back(Complete);
-    expectedListInfo = ListInfo(startCounter,querySize,querySize,querySize,expectedStream,expectedOutcome,expectedCorresponding,expectedLocation);
-    expectedStreamInfo.listInfo = expectedListInfo;
-    expectedStreamInfo.stream = query;
-    expectedPromptInfo.listInfo = expectedListInfo;
-    EXPECT_EQ(test.listInfo(),(vector<ListInfo>{expectedListInfo}));
-    EXPECT_EQ(test.promptInfo(startCounter),expectedPromptInfo);
-    EXPECT_EQ(test.streamInfo(startCounter),expectedStreamInfo);
+    expectedListInfo[0] = firstListInfoConstructor.generateNextListInfo(querySize);
+    expectedTyperInfo[startCounter] = firstTyperInfoConstructor.generateNextTyperInfo(expectedListInfo[0]);
+    checkInfoStructs(test,"Run nonmock MonkeyTyper once.");
 }
