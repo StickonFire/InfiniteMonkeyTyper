@@ -12,42 +12,6 @@
 
 std::string default_alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-PromptInfo::PromptInfo(): seed(0), prompt(), listInfo() { }
-
-PromptInfo::PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo): seed(seed), prompt(prompt), listInfo(listInfo) { }
-
-bool PromptInfo::operator==(const PromptInfo &other) const {
-    return this->seed == other.seed
-        && this->prompt == other.prompt
-        && this->listInfo == other.listInfo;
-}
-
-ostream& operator<<(ostream& os, const PromptInfo other){
-    os << "PromptInfo {\n";
-    os << "Seed: " << other.seed << std::endl;
-    os << "Prompt: {" << other.prompt << "}" << std::endl;
-    os << "ListInfo: " << other.listInfo << std::endl << "}";
-    return os;
-}
-
-StreamInfo::StreamInfo(): seed(0), stream(), listInfo() { }
-
-StreamInfo::StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo): seed(seed), stream(stream), listInfo(listInfo) { }
-
-bool StreamInfo::operator==(const StreamInfo &other) const {
-    return this->seed == other.seed
-        && this->stream == other.stream
-        && this->listInfo == other.listInfo;
-}
-
-ostream& operator<<(ostream& os, const StreamInfo other){
-    os << "StreamInfo {" << std::endl;
-    os << "Seed: " << other.seed << std::endl;
-    os << "Stream: {" << other.stream << std::endl << "}\n";
-    os << "ListInfo: " << other.listInfo << std::endl << "}" << std::endl;
-    return os;
-}
-
 mt19937LetterSelector::mt19937LetterSelector(string alphabet,unsigned int seed): alphabet(alphabet), rng(seed), seed(seed) {}
 
 char mt19937LetterSelector::selectCharacter(){
@@ -206,14 +170,6 @@ ListInfo MonkeyTyper::listInfo(){
 TyperInfo MonkeyTyper::typerInfo(){
     ListInfo listInfo = this->listInfo();
     return TyperInfo(listInfo,this->guessStream,this->query,this->seed);
-}
-
-PromptInfo MonkeyTyper::promptInfo(){
-    return PromptInfo(seed, query, listInfo());
-}
-
-StreamInfo MonkeyTyper::streamInfo(){
-    return StreamInfo(seed, guessStream, listInfo());
 }
 
 std::string MonkeyTyper::getGuessString(){

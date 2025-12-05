@@ -32,30 +32,6 @@ enum Status {
     PacketReady
 };
 
-struct PromptInfo{
-    std::string prompt;
-    unsigned int seed;
-    ListInfo listInfo;
-
-    bool operator==(const PromptInfo &other) const;
-    PromptInfo();
-    PromptInfo(unsigned int seed, std::string prompt, ListInfo listInfo);
-};
-
-ostream& operator<<(ostream &os, const PromptInfo add);
-
-struct StreamInfo{
-    unsigned int seed;
-    std::string stream;
-    ListInfo listInfo;
-
-    bool operator==(const StreamInfo &other) const;
-    StreamInfo();
-    StreamInfo(unsigned int seed, std::string stream, ListInfo listInfo);
-};
-
-ostream& operator<<(ostream &os, const StreamInfo add); 
-
 class LetterSelector {
     public:
         virtual ~LetterSelector() = default;
@@ -123,8 +99,6 @@ class MonkeyTyper {
         void unpause();
         void killStream();
         ListInfo listInfo();
-        PromptInfo promptInfo();
-        StreamInfo streamInfo();
         TyperInfo typerInfo();
         bool complete();
         int getPromptRecord();

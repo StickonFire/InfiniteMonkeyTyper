@@ -66,18 +66,6 @@ vector<ListInfo> RingLeader::listInfo(){
     return result;
 }
 
-std::optional<StreamInfo> RingLeader::streamInfo(int id){
-    if(typers.find(id) != typers.end())
-        return typers.at(id).streamInfo();
-    return { };
-}
-
-std::optional<PromptInfo> RingLeader::promptInfo(int id){
-    if(typers.find(id) != typers.end())
-        return typers.at(id).promptInfo();
-    return { };
-}
-
 std::map<int,TyperInfo> RingLeader::typerInfo(){
     std::map<int,TyperInfo> result;
     for(std::map<int,MonkeyTyper>::iterator itr = typers.begin(); itr != typers.end(); itr++){

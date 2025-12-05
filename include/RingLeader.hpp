@@ -75,11 +75,6 @@ class RingLeader {
          */
         vector<ListInfo> listInfo();
         /**
-         * Given a valid id, returns a stream info of the monkeyTyper associated with that id.
-         */
-        std::optional<StreamInfo> streamInfo(int id);
-        std::optional<PromptInfo> promptInfo(int id);
-        /**
          * Generates a map of TyperInfos each describing a specific monkeyTyper within the RingLeader.
          */
         std::map<int,TyperInfo> typerInfo();
