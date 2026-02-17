@@ -61,5 +61,20 @@ TEST_F(ModelTest,ConstructorEmptyRingLeader){
     prepareTest(emptyList,std::move(idGenerator),runSize);
     checkModelCorrectness();
 }
+
+TEST_F(ModelTest,ConstructorSingleMonkeyTyper){
+    std::map<int,MonkeyTyper> typers;
+    unique_ptr<IdMaker> idGenerator;
+    int runSize = 5;
+    unique_ptr<MockLetterSelector> nullLetterSelector = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*nullLetterSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(20));
+    std::vector<MonkeyTyperArguments> singleMonkey;
+    singleMonkey.push_back(std::move(MonkeyTyperArguments(1,std::move(nullLetterSelector),std::string("ab"))));
+    prepareTest(singleMonkey,std::move(idGenerator),runSize);
+    checkModelCorrectness();
+}
+
 }
 
