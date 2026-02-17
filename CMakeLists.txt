@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/c67de117379f4d1c889c7581a0a76aa0979c2083.zip
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -22,11 +22,13 @@ add_executable(
   src/MonkeyTyper.cpp
   src/RingLeader.cpp
   src/MonkeyTyperFactory.cpp
+  src/Model.cpp
   test/MonkeyTyperTest.cpp
   test/RingLeaderTest.cpp
   test/CounterIdMakerTest.cpp
   test/MonkeyTyperFactoryTest.cpp
   test/InfoStructTest.cpp
+  test/ModelTest.cpp
 )
 target_link_libraries(
   MonkeyTyperTest
