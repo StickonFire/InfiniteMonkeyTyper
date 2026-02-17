@@ -8,9 +8,10 @@
 
 class Model {
     std::unique_ptr<RingLeader> ringLeader;
+    int runSize;
 
     public:
-        Model(std::unique_ptr<RingLeader> ringLeader);
+        Model(std::unique_ptr<RingLeader> ringLeader, int runSize);
         void doRun();
         void doCreateMonkeyTyper(std::string,unsigned int seed);
         void doRemoveMonkeyTyper(unsigned int id);
