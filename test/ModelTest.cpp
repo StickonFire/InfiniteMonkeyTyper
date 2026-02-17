@@ -6,6 +6,7 @@
 #include <memory>
 #include <numeric>
 #include <vector>
+#include <string>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -15,17 +16,50 @@ using ::testing::Test;
 using ::testing::Mock;
 using ::testing::_;
 
+struct MonkeyTyperArguments{
+    int id;
+    std::unique_ptr<LetterSelector> letterSelector;
+    std::string query;
 
-TEST(ModelTest,ConstructorEmptyRingLeader){
+    MonkeyTyperArguments(int id, std::unique_ptr<LetterSelector> letterSelector, std::string query): id(id), letterSelector(std::move(letterSelector)), query(query) { }
+    MonkeyTyperArguments(MonkeyTyperArguments &&source): id(source.id), letterSelector(std::move(source.letterSelector)), query(source.query){ }
+};
+
+class ModelTest: public testing::Test {
+    protected:
+    unique_ptr<ModelInfo> expected;
+    int runSize;
+    unique_ptr<Model> test;
+    
+    void prepareTest(std::vector<MonkeyTyperArguments> &argumentList, unique_ptr<IdMaker> idGen, int runSize) {
+        std::map<int,std::string> expectedMessages;
+        std::map<int,TyperInfo> expectedTyper;
+        expected = make_unique<ModelInfo>(expectedMessages,expectedTyper);
+        std::map<int,MonkeyTyper> typers;
+        for(int i = 0; i < argumentList.size(); i++){
+            MonkeyTyper toAdd(argumentList[i].id,std::move(argumentList[i].letterSelector),argumentList[i].query);
+            expected->typerValues.insert(std::make_pair(argumentList[i].id,toAdd.typerInfo()));
+            typers.insert(std::make_pair(argumentList[i].id,std::move(toAdd)));
+        }
+        unique_ptr<RingLeader> modelRingLeader = std::make_unique<RingLeader>(typers,std::move(idGen));
+        this->runSize = runSize;
+        test = make_unique<Model>(std::move(modelRingLeader),runSize);
+    }
+
+    void checkModelCorrectness(){
+        EXPECT_EQ(test->modelInfo(),*expected);
+        EXPECT_EQ(test->getRunSize(),runSize);
+    }
+
+};
+
+TEST_F(ModelTest,ConstructorEmptyRingLeader){
     std::map<int,MonkeyTyper> typers;
     unique_ptr<IdMaker> idGenerator;
     int runSize = 1;
-    std::map<int,std::string> expectedMessages;
-    std::map<int,TyperInfo> expectedInfo;
-    std::unique_ptr<RingLeader> RingLeaderPtr = make_unique<RingLeader>(typers,std::move(idGenerator));
-    Model test(std::move(RingLeaderPtr),runSize);
-    ModelInfo expected(expectedMessages,expectedInfo);
-    EXPECT_EQ(test.modelInfo(),expected);
-    EXPECT_EQ(test.getRunSize(),runSize);
+    std::vector<MonkeyTyperArguments> emptyList;
+    prepareTest(emptyList,std::move(idGenerator),runSize);
+    checkModelCorrectness();
+}
 }
 

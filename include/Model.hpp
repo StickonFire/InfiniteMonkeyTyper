@@ -18,6 +18,8 @@ class Model {
         void doPauseMonkeyTyper(unsigned int id);
         void doUnpauseMonkeyTyper(unsigned int id);
         ModelInfo modelInfo();
+        int getRunSize();
+        void setRunSize(int runSize);
 };
 
 #endif
