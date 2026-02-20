@@ -51,6 +51,12 @@ class ModelTest: public testing::Test {
         EXPECT_EQ(test->getRunSize(),runSize);
     }
 
+
+    void removeTyperTest(int id){
+        expected->typerValues.erase(id);
+        test->doRemoveMonkeyTyper(id);
+        checkModelCorrectness();
+    }
 };
 
 TEST_F(ModelTest,ConstructorEmptyRingLeader){
@@ -74,6 +80,23 @@ TEST_F(ModelTest,ConstructorSingleMonkeyTyper){
     singleMonkey.push_back(std::move(MonkeyTyperArguments(1,std::move(nullLetterSelector),std::string("ab"))));
     prepareTest(singleMonkey,std::move(idGenerator),runSize,std::move(unique_ptr<MonkeyTyperFactory>()));
     checkModelCorrectness();
+}
+
+TEST_F(ModelTest,RemoveOnlyTyper){
+    std::map<int,MonkeyTyper> typers;
+    int idToRemove = 9;
+    unique_ptr<MockIdMaker> idGenerator = make_unique<MockIdMaker>();
+    EXPECT_CALL(*idGenerator,releaseId(idToRemove))
+        .Times(1);
+    int runSize = 5;
+    unique_ptr<MockLetterSelector> nullLetterSelector = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*nullLetterSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(20));
+    std::vector<MonkeyTyperArguments> singleMonkey;
+    singleMonkey.push_back(std::move(MonkeyTyperArguments(idToRemove,std::move(nullLetterSelector),std::string("ab"))));
+    prepareTest(singleMonkey,std::move(idGenerator),runSize,std::move(unique_ptr<MonkeyTyperFactory>()));
+    removeTyperTest(idToRemove);
 }
 
 }
