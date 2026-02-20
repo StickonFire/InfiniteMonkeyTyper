@@ -31,7 +31,7 @@ class ModelTest: public testing::Test {
     int runSize;
     unique_ptr<Model> test;
     
-    void prepareTest(std::vector<MonkeyTyperArguments> &argumentList, unique_ptr<IdMaker> idGen, int runSize) {
+    void prepareTest(std::vector<MonkeyTyperArguments> &argumentList, unique_ptr<IdMaker> idGen, int runSize,unique_ptr<MonkeyTyperFactory> factory) {
         std::map<int,std::string> expectedMessages;
         std::map<int,TyperInfo> expectedTyper;
         expected = make_unique<ModelInfo>(expectedMessages,expectedTyper);
@@ -41,7 +41,7 @@ class ModelTest: public testing::Test {
             expected->typerValues.insert(std::make_pair(argumentList[i].id,toAdd.typerInfo()));
             typers.insert(std::make_pair(argumentList[i].id,std::move(toAdd)));
         }
-        unique_ptr<RingLeader> modelRingLeader = std::make_unique<RingLeader>(typers,std::move(idGen));
+        unique_ptr<RingLeader> modelRingLeader = std::make_unique<RingLeader>(typers,std::move(idGen),std::move(factory));
         this->runSize = runSize;
         test = make_unique<Model>(std::move(modelRingLeader),runSize);
     }
@@ -58,7 +58,7 @@ TEST_F(ModelTest,ConstructorEmptyRingLeader){
     unique_ptr<IdMaker> idGenerator;
     int runSize = 1;
     std::vector<MonkeyTyperArguments> emptyList;
-    prepareTest(emptyList,std::move(idGenerator),runSize);
+    prepareTest(emptyList,std::move(idGenerator),runSize,std::move(unique_ptr<MonkeyTyperFactory>()));
     checkModelCorrectness();
 }
 
@@ -72,7 +72,7 @@ TEST_F(ModelTest,ConstructorSingleMonkeyTyper){
         .WillOnce(Return(20));
     std::vector<MonkeyTyperArguments> singleMonkey;
     singleMonkey.push_back(std::move(MonkeyTyperArguments(1,std::move(nullLetterSelector),std::string("ab"))));
-    prepareTest(singleMonkey,std::move(idGenerator),runSize);
+    prepareTest(singleMonkey,std::move(idGenerator),runSize,std::move(unique_ptr<MonkeyTyperFactory>()));
     checkModelCorrectness();
 }
 
