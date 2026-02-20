@@ -19,3 +19,7 @@ void Model::setRunSize(int runSize){
     this->runSize = runSize;
 }
 
+
+void Model::doRemoveMonkeyTyper(unsigned int id){
+    this->ringLeader->removeMonkeyTyper(id);
+}
