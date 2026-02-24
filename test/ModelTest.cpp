@@ -60,7 +60,6 @@ class ModelTest: public testing::Test {
 };
 
 TEST_F(ModelTest,ConstructorEmptyRingLeader){
-    std::map<int,MonkeyTyper> typers;
     unique_ptr<IdMaker> idGenerator;
     int runSize = 1;
     std::vector<MonkeyTyperArguments> emptyList;
@@ -69,7 +68,6 @@ TEST_F(ModelTest,ConstructorEmptyRingLeader){
 }
 
 TEST_F(ModelTest,ConstructorSingleMonkeyTyper){
-    std::map<int,MonkeyTyper> typers;
     unique_ptr<IdMaker> idGenerator;
     int runSize = 5;
     unique_ptr<MockLetterSelector> nullLetterSelector = make_unique<MockLetterSelector>();
@@ -83,7 +81,6 @@ TEST_F(ModelTest,ConstructorSingleMonkeyTyper){
 }
 
 TEST_F(ModelTest,RemoveOnlyTyper){
-    std::map<int,MonkeyTyper> typers;
     int idToRemove = 9;
     unique_ptr<MockIdMaker> idGenerator = make_unique<MockIdMaker>();
     EXPECT_CALL(*idGenerator,releaseId(idToRemove))
