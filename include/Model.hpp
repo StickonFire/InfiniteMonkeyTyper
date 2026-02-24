@@ -13,7 +13,7 @@ class Model {
     public:
         Model(std::unique_ptr<RingLeader> ringLeader, int runSize);
         void doRun();
-        void doCreateMonkeyTyper(std::string,unsigned int seed);
+        void doCreateMonkeyTyper(std::string query,unsigned int seed);
         void doRemoveMonkeyTyper(unsigned int id);
         void doPauseMonkeyTyper(unsigned int id);
         void doUnpauseMonkeyTyper(unsigned int id);
