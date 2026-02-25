@@ -29,6 +29,7 @@ add_executable(
   test/MonkeyTyperFactoryTest.cpp
   test/InfoStructTest.cpp
   test/ModelTest.cpp
+  test/ExpectedTyperInfoConstructor.cpp
 )
 target_link_libraries(
   MonkeyTyperTest

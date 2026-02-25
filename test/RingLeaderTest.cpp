@@ -1,9 +1,11 @@
 #include "RingLeader.hpp"
 #include "MonkeyTyper.hpp"
 #include "mockClasses.hpp"
+#include "ExpectedTyperInfoConstructor.hpp"
 
 #include <memory>
 #include <numeric>
+#include <vector>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -21,80 +23,6 @@ ostream& operator<<(ostream& os, vector<T> other){
     }
     os << "}";
     return os;
-}
-
-namespace {
-    template<typename Contained>
-    struct VectorSlicer{
-        std::vector<Contained> container;
-        typename std::vector<Contained>::iterator containerItr;
-
-        VectorSlicer(std::vector<Contained> container): container(container), containerItr(this->container.begin()) { }
-
-        std::vector<Contained> slice(int size){
-            typename std::vector<Contained>::iterator end = containerItr;
-            end += size;
-            std::vector<Contained> result(containerItr,end);
-            containerItr = end;
-            return result;
-        }
-    };
-
-    class ExpectedListInfoConstructor{
-        int id;
-        VectorSlicer<char> expectedStream;
-        VectorSlicer<char> expectedCorrespondingQuery;
-        VectorSlicer<LetterOutcome> expectedOutcome;
-        VectorSlicer<int> expectedBestLocation;
-
-        VectorSlicer<int> expectedCurrentLocation;
-        VectorSlicer<int> expectedRecord;
-        VectorSlicer<int> expectedSize;
-
-        public:
-            ExpectedListInfoConstructor(int id,std::vector<int> expectedCurrentLocation, std::vector<int> expectedSize, std::vector<int> expectedRecord, std::vector<char> expectedStream, std::vector<LetterOutcome> expectedOutcome, std::vector<char> expectedCorrespondingQuery, 
-                std::vector<int> expectedBestLocation) :
-                id(id), expectedStream(expectedStream), expectedCorrespondingQuery(expectedCorrespondingQuery), expectedOutcome(expectedOutcome), expectedBestLocation(expectedBestLocation),
-                expectedCurrentLocation(expectedCurrentLocation), expectedRecord(expectedRecord), expectedSize(expectedSize) { };
-
-            ListInfo generateNextListInfo(int size){
-                vector<char> stream = expectedStream.slice(size);
-                vector<LetterOutcome> outcome = expectedOutcome.slice(size);
-                vector<char> corresponding = expectedCorrespondingQuery.slice(size);
-                vector<int> bestLocation = expectedBestLocation.slice(size);
-                int currentLocation = expectedCurrentLocation.slice(1)[0];
-                int streamSize = expectedSize.slice(1)[0];
-                int record = expectedRecord.slice(1)[0];
-                return ListInfo(id,currentLocation,streamSize,record,stream,outcome,corresponding,bestLocation);
-            }
-
-            ListInfo generateEmptyListInfo(){
-                vector<char> emptyChar;
-                vector<LetterOutcome> emptyOutcome;
-                vector<int> emptyInt;
-                return ListInfo(id,0,0,0,emptyChar,emptyOutcome,emptyChar,emptyInt);
-            }
-    };
-
-    class ExpectedTyperInfoConstructor{
-        VectorSlicer<std::string> streams;
-        std::string prompt;
-        unsigned int seed;
-        
-        public:
-            ExpectedTyperInfoConstructor(std::vector<std::string> streams,std::string prompt,unsigned int seed):
-                streams(streams),prompt(prompt),seed(seed) { }
-
-            TyperInfo generateNextTyperInfo(ListInfo listInfo){
-                return TyperInfo(listInfo,streams.slice(1)[0],prompt,seed);
-            }
-
-            TyperInfo generateEmptyTyperInfo(int id){
-                ListInfo empty;
-                empty.id = id;
-                return TyperInfo(empty,std::string(""),prompt,seed);
-            }
-    };
 }
 
 class RingLeaderWholisticTestSuite : public testing::Test {
