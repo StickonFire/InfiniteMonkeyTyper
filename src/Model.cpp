@@ -19,6 +19,9 @@ void Model::setRunSize(int runSize){
     this->runSize = runSize;
 }
 
+void Model::doCreateMonkeyTyper(std::string prompt, unsigned int seed){
+    this->ringLeader->createMonkeyTyper(prompt,seed);
+}
 
 void Model::doRemoveMonkeyTyper(unsigned int id){
     this->ringLeader->removeMonkeyTyper(id);
