@@ -102,6 +102,14 @@ TEST_F(ModelTest,RemoveOnlyTyper){
     removeTyperTest(idToRemove);
 }
 
+TEST_F(ModelTest,RemoveNonExistentTyper){
+    int idToRemove = 9;
+    int runSize = 10;
+    std::vector<MonkeyTyperArguments> noMonkeys;
+    prepareTest(noMonkeys,std::move(make_unique<MockIdMaker>()),runSize,std::move(unique_ptr<MonkeyTyperFactory>()));
+    removeTyperTest(idToRemove);
+}
+
 TEST_F(ModelTest,AddMonkeyToEmpty){
     int runSize = 10;
     int idToAdd = 45;
