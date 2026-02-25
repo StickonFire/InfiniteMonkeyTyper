@@ -122,3 +122,26 @@ TEST_F(ModelTest,AddMonkeyToEmpty){
     addTyperTest(idToAdd,std::move(secondSelector),expectedNew.query);
 }
 
+TEST_F(ModelTest,AddMonkeyToOneTyperModel){
+    int runSize = 10;
+    int idToAdd = 45;
+    unique_ptr<MockIdMaker> idGenerator = make_unique<MockIdMaker>();
+    EXPECT_CALL(*idGenerator,generateId())
+        .Times(1)
+        .WillRepeatedly(Return(idToAdd));
+    int existingId = 10;
+    std::string query = "no";
+    unique_ptr<mt19937LetterSelector> existingSelector = make_unique<mt19937LetterSelector>("no",55);
+    std::vector<MonkeyTyperArguments> existingTypers;
+    existingTypers.push_back(std::move(MonkeyTyperArguments(existingId,std::move(existingSelector),query)));
+    unique_ptr<MockMonkeyTyperFactory> factory = make_unique<MockMonkeyTyperFactory>();
+    int seed = 10;
+    unique_ptr<mt19937LetterSelector> letterSelector = make_unique<mt19937LetterSelector>("abc",seed);
+    unique_ptr<mt19937LetterSelector> expectedSelector = make_unique<mt19937LetterSelector>("abc",seed);
+    MonkeyTyperArguments expectedNew(idToAdd,std::move(letterSelector),"abc");
+    EXPECT_CALL(*factory,build(expectedNew.id,seed,expectedNew.query))
+        .Times(1)
+        .WillOnce(Return(MonkeyTyper(idToAdd,std::move(expectedNew.letterSelector),expectedNew.query)));
+    prepareTest(existingTypers,std::move(idGenerator),runSize,std::move(factory));
+    addTyperTest(idToAdd,std::move(expectedSelector),expectedNew.query);
+}
