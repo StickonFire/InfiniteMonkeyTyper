@@ -2,6 +2,7 @@
 #include "MonkeyTyper.hpp"
 #include "mockClasses.hpp"
 #include "Model.hpp"
+#include "ExpectedTyperInfoConstructor.hpp"
 
 #include <memory>
 #include <numeric>
@@ -64,6 +65,15 @@ class ModelTest: public testing::Test {
     void removeTyperTest(int id){
         expected->typerValues.erase(id);
         test->doRemoveMonkeyTyper(id);
+        checkModelCorrectness();
+    }
+
+    void setExpected(unique_ptr<ModelInfo> other){
+        this->expected = std::move(other);
+    }
+
+    void runTyperTest(){
+        test->doRun();
         checkModelCorrectness();
     }
 };
@@ -155,4 +165,88 @@ TEST_F(ModelTest,AddMonkeyToOneTyperModel){
         .WillOnce(Return(MonkeyTyper(idToAdd,std::move(expectedNew.letterSelector),expectedNew.query)));
     prepareTest(existingTypers,std::move(idGenerator),runSize,std::move(factory));
     addTyperTest(idToAdd,std::move(expectedSelector),expectedNew.query);
+}
+
+TEST_F(ModelTest,RunEmpty){
+    int runSize = 10;
+    std::vector<MonkeyTyperArguments> noMonkeys;
+    prepareTest(noMonkeys,std::move(make_unique<MockIdMaker>()),runSize,std::move(unique_ptr<MonkeyTyperFactory>()));
+    runTyperTest();
+}
+
+TEST_F(ModelTest,RunSingle){
+    int runSize = 1;
+    int existingId = 0;
+    std::string existingQuery = "a";
+    unsigned int seed = 1;
+    std::string expectedStream = "b";
+    unique_ptr<MockLetterSelector> singleMonkeyLetterSelector = make_unique<MockLetterSelector>();
+    EXPECT_CALL(*singleMonkeyLetterSelector,selectCharacter())
+        .Times(1)
+        .WillOnce(Return(expectedStream[0]));
+    EXPECT_CALL(*singleMonkeyLetterSelector,getSeed())
+        .Times(1)
+        .WillOnce(Return(seed));
+    ExpectedListInfoConstructor resultListInfoCreator(existingId,{0}, {1}, {0}, {'b'}, {NoMatch}, {'a'}, {0});
+    ExpectedTyperInfoConstructor resultTyperInfoCreator(std::vector<std::string>{"b"},existingQuery,seed);
+    std::vector<MonkeyTyperArguments> singleMonkey;
+    singleMonkey.push_back(MonkeyTyperArguments(existingId,std::move(singleMonkeyLetterSelector),existingQuery,false));
+    prepareTest(singleMonkey,std::move(make_unique<MockIdMaker>()),runSize,std::move(unique_ptr<MonkeyTyperFactory>()));
+    TyperInfo expectedTyperInfo = resultTyperInfoCreator.generateNextTyperInfo(resultListInfoCreator.generateNextListInfo(1));
+    std::map<int,TyperInfo> expectedTyperInfos;
+    expectedTyperInfos[existingId] = expectedTyperInfo;
+    std::map<int,std::string> messages;
+    unique_ptr<ModelInfo> expectedModelInfo = make_unique<ModelInfo>(messages,expectedTyperInfos);
+    setExpected(std::move(expectedModelInfo));
+    runTyperTest();
+}
+
+TEST_F(ModelTest,PauseTest){
+    int runSize = 1;
+    std::vector<MonkeyTyperArguments> typers;
+    std::map<int,TyperInfo> expectedTyperInfos;
+    for(int i = 0; i < 4; i++){
+        int id = i;
+        unsigned int seed = i;
+        std::string expectedQuery = "a";
+        expectedQuery[0] = 3 + 'a';
+        unique_ptr<MockLetterSelector> singleMonkeyLetterSelector;
+        char expectedStream = char(i) + 'a';
+        singleMonkeyLetterSelector = make_unique<MockLetterSelector>();
+        EXPECT_CALL(*singleMonkeyLetterSelector,getSeed())
+            .Times(1)
+            .WillOnce(Return(seed)); 
+        bool shouldComplete = i==3;
+        bool startPaused = i < 2;
+        bool shouldRun = i % 2;
+        ExpectedListInfoConstructor listInfoConstructor(id,{shouldComplete},{1},{shouldComplete},{expectedStream},
+            {(shouldComplete ? Complete : NoMatch)},{expectedQuery[0]},{shouldComplete});
+        std::string stream = "a";
+        stream[0] = expectedStream;
+        ExpectedTyperInfoConstructor typerInfoConstructor(std::vector<std::string>{stream},expectedQuery,seed);
+        if(shouldRun){
+            EXPECT_CALL(*singleMonkeyLetterSelector,selectCharacter())
+                .Times(1)
+                .WillOnce(Return(expectedStream));
+            expectedTyperInfos[id] = typerInfoConstructor.generateNextTyperInfo(listInfoConstructor.generateNextListInfo(1));
+        }
+        else {
+            EXPECT_CALL(*singleMonkeyLetterSelector,selectCharacter())
+                .Times(0);
+            ListInfo toAdd(listInfoConstructor.generateEmptyListInfo());
+            expectedTyperInfos[id] = TyperInfo(toAdd,std::string(""),expectedQuery,seed);
+        }
+        typers.push_back(MonkeyTyperArguments(id,std::move(singleMonkeyLetterSelector),expectedQuery,startPaused));
+    }
+    prepareTest(typers,std::move(make_unique<MockIdMaker>()),runSize,std::move(unique_ptr<MonkeyTyperFactory>()));
+    std::map<int,std::string> messages;
+    unique_ptr<ModelInfo> expectedModelInfo = make_unique<ModelInfo>(messages,expectedTyperInfos);
+    setExpected(std::move(expectedModelInfo));
+    for(int i = 0; i < 4; i++){
+        if(i % 2)
+            test->doUnpauseMonkeyTyper(i);
+        else
+            test->doPauseMonkeyTyper(i);
+    }
+    runTyperTest();
 }
