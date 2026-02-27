@@ -26,3 +26,15 @@ void Model::doCreateMonkeyTyper(std::string prompt, unsigned int seed){
 void Model::doRemoveMonkeyTyper(unsigned int id){
     this->ringLeader->removeMonkeyTyper(id);
 }
+
+void Model::doPauseMonkeyTyper(unsigned int id){
+    this->ringLeader->pauseMonkeyTyper(id);
+}
+
+void Model::doUnpauseMonkeyTyper(unsigned int id){
+    this->ringLeader->unpauseMonkeyTyper(id);
+}
+
+void Model::doRun(){
+    this->ringLeader->runNCharacters(runSize);
+}
