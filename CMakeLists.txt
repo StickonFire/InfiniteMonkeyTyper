@@ -22,6 +22,7 @@ add_executable(
   src/MonkeyTyper.cpp
   src/RingLeader.cpp
   src/MonkeyTyperFactory.cpp
+  src/ModelRequests.cpp
   src/Model.cpp
   test/MonkeyTyperTest.cpp
   test/RingLeaderTest.cpp
