@@ -5,7 +5,7 @@ PauseRequest::PauseRequest(unsigned int id) {
     this->id = id;
 }
 
-void PauseRequest::dispatch(Model *target) {
+void PauseRequest::dispatch(AbstractModel *target) {
     target->doPauseMonkeyTyper(id);
 }
 
@@ -13,7 +13,7 @@ UnpauseRequest::UnpauseRequest(unsigned int id) {
     this->id = id;
 }
 
-void UnpauseRequest::dispatch(Model *target) {
+void UnpauseRequest::dispatch(AbstractModel *target) {
     target->doUnpauseMonkeyTyper(id);
 }
 
@@ -21,7 +21,7 @@ RemoveRequest::RemoveRequest(unsigned int id) {
     this->id = id;
 }
 
-void RemoveRequest::dispatch(Model *target) {
+void RemoveRequest::dispatch(AbstractModel *target) {
     target->doRemoveMonkeyTyper(id);
 }
 
@@ -30,7 +30,7 @@ CreateRequest::CreateRequest(std::string query, unsigned int seed){
     this->query = query;
 }
 
-void CreateRequest::dispatch(Model *target){
+void CreateRequest::dispatch(AbstractModel *target){
     target->doCreateMonkeyTyper(query,seed);
 }
 

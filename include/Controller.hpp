@@ -10,9 +10,9 @@
 class Controller {
     std::queue<UserInput> inputQueue;
     View *view;
-    Model *model;
+    AbstractModel *model;
 
-    Controller(View *view, Model *model);
+    Controller(View *view, AbstractModel *model);
 
     public:
         /**
