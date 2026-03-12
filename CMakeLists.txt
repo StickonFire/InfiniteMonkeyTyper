@@ -28,6 +28,7 @@ add_executable(
   test/RingLeaderTest.cpp
   test/CounterIdMakerTest.cpp
   test/MonkeyTyperFactoryTest.cpp
+  test/ModelRequestTests.cpp
   test/InfoStructTest.cpp
   test/ModelTest.cpp
   test/ExpectedTyperInfoConstructor.cpp
