@@ -1,5 +1,9 @@
 #include "Model.hpp"
 
+/**
+ * Virtual Class representing a request from the Controller to the Model.
+ * The dispatch function is used to tell the Model exactly what to do when it consumes the request.
+ */
 class ModelRequest {
     public:
         virtual void dispatch(AbstractModel *target) = 0;
